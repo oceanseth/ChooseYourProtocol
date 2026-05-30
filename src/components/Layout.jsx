@@ -62,6 +62,7 @@ export default function Layout() {
           <NavLink to="/collection">Collection</NavLink>
           <NavLink to="/knowledge">Knowledge</NavLink>
           {isAdmin && <NavLink to="/admin">Admin</NavLink>}
+          <NavLink to="/about">About</NavLink>
         </nav>
         <div className="user-chip">
           <span className="org-name">{org && org.name}</span>

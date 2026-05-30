@@ -4,7 +4,17 @@
 
 > The modern smoke break. An agent watches how your team works, learns what everyone is trying to grow into, and pulls two people away from their desks for 90 seconds of movement, novel connection, and a guided conversation — then turns that moment into a reward and a knowledge asset.
 
-[chooseyourprotocol.com](https://chooseyourprotocol.com)
+[chooseyourprotocol.com](https://chooseyourprotocol.com) · [📊 Pitch deck](https://docs.google.com/presentation/d/11MZwAIJX6FNa1xT2bAP2PKtAnsk8JbVJunHnGo4M6Qk/edit?usp=sharing) · [About](https://chooseyourprotocol.com/about)
+
+---
+
+## The hidden function of the smoke break
+
+![The Hidden Function of the Smoke Break — Version 1.0 (the accidental OS) vs Version 2.0 (Choose Your Protocol)](public/smoke-break.jpg)
+
+**Version 1.0 — The Accidental OS:** "It wasn't about smoking." The smoke break quietly created recurring human connection, mentorship, trust, and cross-team friendships — then mostly disappeared.
+
+**Version 2.0 — Choose Your Protocol:** a social operating system for modern organizations that rebuilds that ritual on purpose. → [See the full pitch deck](https://docs.google.com/presentation/d/11MZwAIJX6FNa1xT2bAP2PKtAnsk8JbVJunHnGo4M6Qk/edit?usp=sharing)
 
 ---
 

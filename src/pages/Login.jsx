@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { signInEmail, signUpEmail, signInGoogle } from '../firebase.js';
+import { DECK_URL } from './About.jsx';
 
 export default function Login() {
   const [mode, setMode] = useState('signin');
@@ -46,6 +48,10 @@ export default function Login() {
           <li>⚡ Get matched for a 2-minute level-up when teammates are free</li>
           <li>✨ Earn a rare PokéVibe creature from every conversation</li>
         </ul>
+        <p className="hero-links">
+          <Link to="/about">Read the story →</Link>
+          <a href={DECK_URL} target="_blank" rel="noreferrer">Pitch deck ↗</a>
+        </p>
       </div>
 
       <div className="auth-card">

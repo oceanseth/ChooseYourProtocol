@@ -9,6 +9,7 @@ import Activity from './pages/Activity.jsx';
 import Collection from './pages/Collection.jsx';
 import KnowledgeBase from './pages/KnowledgeBase.jsx';
 import Admin from './pages/Admin.jsx';
+import About from './pages/About.jsx';
 
 function Splash({ text = 'Loading…' }) {
   return (
@@ -23,6 +24,9 @@ function Splash({ text = 'Loading…' }) {
 export default function App() {
   const { user, member, loading, error } = useAuth();
   const location = useLocation();
+
+  // The About page is public — reachable whether or not you're signed in.
+  if (location.pathname === '/about') return <About />;
 
   if (loading) return <Splash text="Setting up your protocol…" />;
 

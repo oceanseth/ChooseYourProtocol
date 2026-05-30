@@ -220,6 +220,22 @@ input:focus, select:focus { border-color: var(--primary); }
 .admin .card { margin-bottom: 18px; }
 @media (max-width: 680px) { .goal-form { grid-template-columns: 1fr; } }
 
+/* ---------- about ---------- */
+.about-page { max-width: 980px; margin: 0 auto; padding: 20px 24px 70px; }
+.about-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 0 24px; gap: 12px; flex-wrap: wrap; }
+.about-bar .brand { font-weight: 800; font-size: 18px; }
+.about-hero { text-align: center; margin: 18px 0 22px; }
+.about-hero h1 { font-size: 38px; }
+.about-slide { width: 100%; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow); display: block; }
+.about-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 26px 0; }
+.about-col { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+.about-loop { text-align: center; margin: 30px 0; }
+.loop-steps { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 14px; }
+.loop-steps span { background: var(--card); border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; font-size: 14px; }
+.about-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 26px; }
+.hero-links { display: flex; gap: 18px; margin-top: 18px; font-weight: 600; }
+@media (max-width: 720px) { .about-cols { grid-template-columns: 1fr; } .about-hero h1 { font-size: 28px; } }
+
 .pulse { animation: pulse 2s infinite; }
 @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(124, 92, 255, 0.5); } 50% { box-shadow: 0 0 0 10px rgba(124, 92, 255, 0); } }
 
