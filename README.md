@@ -22,7 +22,7 @@ The old smoke break solved part of this by accident: it got people up, mixed tea
 
 ## How it works
 
-1. **The agent captures context.** A lightweight desktop agent runs on your machines, observing how you work and posting privacy-respecting work-context signals to the platform. These signals fill the knowledge bases for people across your organization.
+1. **The agent captures context.** A desktop agent — built on the **OpenAI Agents SDK** — runs on your machines, observing how you work and posting privacy-respecting work-context signals to the platform. A *Knowledge Agent* synthesizes those signals into knowledge-base entries for each person, and a *Coordinator Agent* reasons over who's free right now to time level-up opportunities.
 2. **You set personal goals.** Pick what you want to grow in three categories — **fitness**, **social**, and **business**. Fitness breaks down further (flexibility, strength, endurance), so a "flexibility" goal can spawn a toe-touch stretch.
 3. **A level-up opportunity fires.** Using realtime user data and company goals set by administrators, the agent decides the right moment in the day to send a **"level-up opportunity"** alert — an invitation to step away and grow.
 4. **You get matched for a micro-activity.** The system pairs you in realtime with someone in your org who shares the goal (same org, same objective) for a short physical + social activity with a guided conversation topic.
@@ -76,7 +76,7 @@ A pragmatic, fully-provisioned cloud stack built for a hackathon timeline but wi
 | **Database** | **Cloud Firestore**, multi-tenant (Firebase project id: `chooseyourprotocol`) |
 | **API** | **AWS Lambda + API Gateway v2**, using the **Firebase Admin SDK** (service-account credentials pulled from **AWS SSM Parameter Store**) |
 | **Matchmaking** | Realtime 2-person matching via **Firestore** |
-| **Desktop agent** | Minimal **Node** agent that posts work-context signals to the API to trigger level-up alerts |
+| **Desktop agent** | **Node + OpenAI Agents SDK** (with an optional Electron tray shell): a Knowledge Agent that fills each person's knowledge base and a Coordinator Agent that schedules level-ups when teammates are free; degrades to plain signal-posting without an `OPENAI_API_KEY` |
 | **Infrastructure** | **Terraform** infra-as-code |
 | **CI/CD** | **GitHub Actions** |
 
@@ -90,7 +90,7 @@ A pragmatic, fully-provisioned cloud stack built for a hackathon timeline but wi
 .
 ├── src/          # Vite + React SPA (the web app)
 ├── api/          # AWS Lambda handlers (API Gateway v2, Firebase Admin SDK)
-├── agent/        # Minimal Node desktop agent (posts work-context signals)
+├── agent/        # Desktop agent (OpenAI Agents SDK + Electron shell)
 ├── terraform/    # Infrastructure-as-code (S3, CloudFront, Route53/ACM, Lambda, API GW)
 ├── scripts/      # Helper and ops scripts
 └── .github/      # GitHub Actions CI/CD workflows
