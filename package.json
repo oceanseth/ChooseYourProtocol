@@ -1,0 +1,41 @@
+{
+  "name": "chooseyourprotocol",
+  "version": "0.1.0",
+  "description": "ChooseYourProtocol — agent-driven, gamified team level-ups. The modern smoke break.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "concurrently -n vite,api -c blue,green \"npm:dev:vite\" \"npm:dev:api\"",
+    "dev:vite": "vite",
+    "dev:api": "cross-env IS_OFFLINE=true STAGE=local nodemon --watch server --watch api --watch utils --ext js,cjs server/local-api-server.cjs",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lambda:layer": "node scripts/build-layer.js",
+    "lambda:package": "node scripts/build-lambda.js",
+    "terraform:init": "cd terraform && terraform init",
+    "terraform:plan": "cd terraform && terraform plan",
+    "terraform:apply": "cd terraform && terraform apply",
+    "deploy:s3": "bash scripts/deploy-s3.sh",
+    "deploy:frontend": "npm run build && npm run deploy:s3",
+    "deploy": "bash scripts/deploy.sh"
+  },
+  "dependencies": {
+    "firebase": "^11.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-ssm": "^3.700.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "firebase-admin": "^13.0.0",
+    "nodemon": "^3.1.9",
+    "vite": "^6.0.5"
+  }
+}

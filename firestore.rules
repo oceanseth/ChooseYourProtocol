@@ -1,0 +1,127 @@
+rules_version = '2';
+
+// ChooseYourProtocol — multi-tenant Firestore rules.
+//
+// Every tenant lives under /organizations/{orgId}. A user's organization and
+// role are stamped into their Firebase custom claims (orgId, role) by the
+// server `/api/auth/bootstrap` endpoint after first login. Rules below trust
+// those claims for tenant isolation, so a member of org A can never read or
+// write org B's data.
+//
+// The Firebase Admin SDK (our Lambda API) bypasses these rules entirely, so
+// anything that must be tamper-proof (creating orgs, assigning roles, scoring
+// the conversation vibe, minting creatures, writing knowledge-base sources)
+// is done server-side. Clients get just enough write access to drive the
+// realtime matchmaking handshake between two browsers.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // True when the caller's custom claim ties them to this org.
+    function inOrg(orgId) {
+      return isSignedIn() && request.auth.token.orgId == orgId;
+    }
+
+    function isOrgAdmin(orgId) {
+      return inOrg(orgId) && request.auth.token.role == 'admin';
+    }
+
+    function isParticipant(resourceData) {
+      return isSignedIn() && request.auth.uid in resourceData.participants;
+    }
+
+    match /organizations/{orgId} {
+      // Any member may read their org (name, company goals, settings).
+      allow read: if inOrg(orgId);
+      // Only admins may edit company goals / settings from the client.
+      // Org creation and role assignment happen server-side (Admin SDK).
+      allow update: if isOrgAdmin(orgId);
+      allow create, delete: if false;
+
+      // Member profiles: personal goals, display info, role.
+      match /members/{uid} {
+        allow read: if inOrg(orgId);
+        // You may edit your own profile (e.g. set personal goals), but role is
+        // managed server-side — enforce that a client write keeps role unchanged.
+        allow update: if inOrg(orgId) && request.auth.uid == uid
+          && request.resource.data.role == resource.data.role;
+        allow create, delete: if false;
+
+        // A member's earned creature collection (the PokéVibe "children").
+        match /collection/{creatureId} {
+          allow read: if inOrg(orgId);
+          allow write: if false; // minted server-side only
+        }
+      }
+
+      // Realtime matchmaking queue. Members read the queue to find a partner
+      // and update entries to claim a match (transactional pairing in the
+      // client). Tenant-scoped, so only same-org members ever interact.
+      match /queue/{uid} {
+        allow read: if inOrg(orgId);
+        allow create, update, delete: if inOrg(orgId);
+      }
+
+      // Activity sessions (plank + guided conversation between two members).
+      match /sessions/{sessionId} {
+        allow read: if inOrg(orgId);
+        allow create: if inOrg(orgId) && request.auth.uid in request.resource.data.participants;
+        allow update: if inOrg(orgId) && isParticipant(resource.data);
+        allow delete: if false;
+
+        // The guided conversation transcript.
+        match /messages/{messageId} {
+          allow read: if inOrg(orgId);
+          allow create: if inOrg(orgId)
+            && request.auth.uid == request.resource.data.senderUid;
+          allow update, delete: if false;
+        }
+      }
+
+      // Org-wide creature "PokéDex" (browsable by all members). Minted server-side.
+      match /creatures/{creatureId} {
+        allow read: if inOrg(orgId);
+        allow write: if false;
+      }
+
+      // Knowledge-base sources contributed by activities. Read by members;
+      // written server-side when a session completes.
+      match /knowledgeBase/{sourceId} {
+        allow read: if inOrg(orgId);
+        allow write: if false;
+      }
+
+      // Desktop-agent work-context signals. Written server-side only.
+      // A member may read their own signals; admins may read all (for reports).
+      match /signals/{signalId} {
+        allow read: if isOrgAdmin(orgId)
+          || (inOrg(orgId) && resource.data.uid == request.auth.uid);
+        allow write: if false;
+      }
+
+      // Level-up opportunity alerts. Read by members; created server-side.
+      match /alerts/{alertId} {
+        allow read: if inOrg(orgId);
+        // Members may acknowledge/dismiss their own alert.
+        allow update: if inOrg(orgId) && resource.data.uid == request.auth.uid;
+        allow create, delete: if false;
+      }
+    }
+
+    // Lightweight lookup so a freshly authenticated user can discover which
+    // org they belong to. Written server-side at bootstrap.
+    match /users/{uid} {
+      allow read: if isSignedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Default deny.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

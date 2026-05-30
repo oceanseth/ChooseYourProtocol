@@ -1,0 +1,10 @@
+{
+  "email": "you@example.com",
+  "password": "your-firebase-password",
+  "apiUrl": "https://chooseyourprotocol.com",
+  "intervalSeconds": 60,
+  "openaiApiKey": "sk-...",
+  "model": "gpt-4.1-mini",
+  "knowledgeIntervalCycles": 5,
+  "coordinatorIntervalCycles": 5
+}

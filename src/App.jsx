@@ -1,0 +1,62 @@
+import React from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from './auth.jsx';
+import Layout from './components/Layout.jsx';
+import Login from './pages/Login.jsx';
+import Onboarding from './pages/Onboarding.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import Activity from './pages/Activity.jsx';
+import Collection from './pages/Collection.jsx';
+import KnowledgeBase from './pages/KnowledgeBase.jsx';
+import Admin from './pages/Admin.jsx';
+
+function Splash({ text = 'Loading…' }) {
+  return (
+    <div className="splash">
+      <div className="splash-logo">⊘ ChooseYourProtocol</div>
+      <div className="spinner" />
+      <p>{text}</p>
+    </div>
+  );
+}
+
+export default function App() {
+  const { user, member, loading, error } = useAuth();
+  const location = useLocation();
+
+  if (loading) return <Splash text="Setting up your protocol…" />;
+
+  if (!user) {
+    return (
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<Navigate to="/login" replace state={{ from: location }} />} />
+      </Routes>
+    );
+  }
+
+  if (error) {
+    return <Splash text={`Account setup error: ${error}`} />;
+  }
+
+  // Gate: a member with no personal goals must complete onboarding first.
+  const hasGoals = member && Array.isArray(member.personalGoals) && member.personalGoals.length > 0;
+  if (!hasGoals && location.pathname !== '/onboarding') {
+    return <Navigate to="/onboarding" replace />;
+  }
+
+  return (
+    <Routes>
+      <Route path="/onboarding" element={<Onboarding />} />
+      <Route element={<Layout />}>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/activity" element={<Activity />} />
+        <Route path="/collection" element={<Collection />} />
+        <Route path="/knowledge" element={<KnowledgeBase />} />
+        <Route path="/admin" element={<Admin />} />
+      </Route>
+      <Route path="/login" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}

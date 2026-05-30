@@ -1,0 +1,43 @@
+name: Deploy API (Lambda)
+
+# Fast code deploys: rebuilds the function package and updates the existing
+# Lambda created by Terraform. Infrastructure or dependency-layer changes still
+# need a local `npm run deploy` (terraform apply) since state lives locally.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'api/**'
+      - 'utils/**'
+      - '.github/workflows/deploy-lambda.yml'
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  FUNCTION_NAME: cyp-api-production
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build function package
+        run: node scripts/build-lambda.js
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update Lambda code
+        run: |
+          aws lambda update-function-code \
+            --function-name "$FUNCTION_NAME" \
+            --zip-file fileb://lambda-package.zip \
+            --publish

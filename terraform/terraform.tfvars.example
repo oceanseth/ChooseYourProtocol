@@ -1,0 +1,6 @@
+# Copy to terraform.tfvars and adjust if needed. Defaults already target
+# chooseyourprotocol.com in us-east-1, so this file is optional.
+aws_region       = "us-east-1"
+stage            = "production"
+domain_name      = "chooseyourprotocol.com"
+site_bucket_name = "chooseyourprotocol.com"

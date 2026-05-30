@@ -1,0 +1,35 @@
+# dependencies
+node_modules/
+**/node_modules/
+
+# build output
+dist/
+.vite/
+
+# lambda build artifacts
+lambda-package/
+lambda-layer/
+lambda-package.zip
+lambda-layer.zip
+.layer-hash
+
+# terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/*.tfvars
+!terraform/*.tfvars.example
+terraform/crash.log
+terraform/override.tf*
+
+# env / secrets
+.env
+.env.local
+.env.*.local
+*-service-account*.json
+agent/agent.config.json
+
+# os / editor
+.DS_Store
+*.log
