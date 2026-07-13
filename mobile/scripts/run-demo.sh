@@ -5,6 +5,9 @@ set -e
 
 cd "$(dirname "$0")/.."
 
+# Raise the open-file limit so Metro's file watcher doesn't hit EMFILE on macOS/Linux.
+ulimit -n 65536 2>/dev/null || true
+
 echo "==> Installing dependencies (first run only, ~1-2 min)…"
 if [ ! -d node_modules ]; then
   npm install
@@ -21,7 +24,8 @@ echo "==> Backend health:"
 curl -s http://localhost:8787/health || echo "(backend not up yet — it will be in a moment)"
 echo ""
 
-# Start Expo. --lan so your phone on the same Wi-Fi can connect.
-echo "==> Launching Expo. Scan the QR code below with the Expo Go app on your phone."
-echo "    (Phone and computer must be on the SAME Wi-Fi network.)"
-npx expo start --lan
+# Prefer LAN; if the machine has a low watcher limit, --tunnel avoids the file-watch wall.
+MODE="${EXPO_MODE:-lan}"
+echo "==> Launching Expo (${MODE}). Scan the QR with Expo Go on your phone."
+echo "    (Phone and computer on the SAME Wi-Fi for --lan. Use EXPO_MODE=tunnel if LAN fails.)"
+npx expo start --${MODE}

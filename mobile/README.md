@@ -54,3 +54,11 @@ Then scan the QR in Expo Go.
   still fails, make sure both devices are on the same network and your firewall allows port 8787.
 - This is an MVP demo: stack is stored locally on-device (AsyncStorage). No accounts, no server
   persistence, no synthetic seeding yet — those are the next milestones in the spec.
+
+## Troubleshooting
+
+- **`EMFILE: too many open files, watch`** — Metro's file watcher hit the OS limit.
+  The run script now raises `ulimit -n`. If it still happens, either install **watchman**
+  (`brew install watchman` on macOS) or run in tunnel mode: `EXPO_MODE=tunnel npm run demo`.
+- **`expo-router/babel is deprecated`** — fixed; `babel.config.js` uses only `babel-preset-expo`.
+- **Deprecation `npm warn` lines during install** — harmless, from Expo's dependency tree.
