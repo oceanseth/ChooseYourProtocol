@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "StackMax",
+    "slug": "stackmax",
+    "scheme": "stackmax",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0B0B0F",
+    "splash": {
+      "backgroundColor": "#0B0B0F",
+      "resizeMode": "contain"
+    },
+    "ios": { "supportsTablet": true },
+    "android": {
+      "adaptiveIcon": { "backgroundColor": "#0B0B0F" }
+    },
+    "plugins": ["expo-router"],
+    "extra": {
+      "apiBaseUrl": "http://localhost:8787"
+    }
+  }
+}
