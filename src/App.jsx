@@ -10,6 +10,9 @@ import Collection from './pages/Collection.jsx';
 import KnowledgeBase from './pages/KnowledgeBase.jsx';
 import Admin from './pages/Admin.jsx';
 import About from './pages/About.jsx';
+import Landing from './pages/Landing.jsx';
+import Terms from './pages/Terms.jsx';
+import Privacy from './pages/Privacy.jsx';
 
 function Splash({ text = 'Loading…' }) {
   return (
@@ -25,14 +28,17 @@ export default function App() {
   const { user, member, loading, error } = useAuth();
   const location = useLocation();
 
-  // The About page is public — reachable whether or not you're signed in.
+  // Public pages — reachable whether or not you're signed in.
   if (location.pathname === '/about') return <About />;
+  if (location.pathname === '/terms') return <Terms />;
+  if (location.pathname === '/privacy') return <Privacy />;
 
   if (loading) return <Splash text="Setting up your protocol…" />;
 
   if (!user) {
     return (
       <Routes>
+        <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<Navigate to="/login" replace state={{ from: location }} />} />
       </Routes>

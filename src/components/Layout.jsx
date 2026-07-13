@@ -74,6 +74,14 @@ export default function Layout() {
       <main className="content">
         <Outlet />
       </main>
+      <footer className="site-footer">
+        <span>AI-orchestrated community. Data may be AI-generated and is not guaranteed accurate.</span>
+        <nav className="footer-nav">
+          <Link to="/terms">Terms</Link>
+          <Link to="/privacy">Privacy</Link>
+          <Link to="/about">About</Link>
+        </nav>
+      </footer>
     </div>
   );
 }

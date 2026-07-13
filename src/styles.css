@@ -242,3 +242,52 @@ input:focus, select:focus { border-color: var(--primary); }
 /* creature idle bob */
 .creature-animate { animation: bob 3s ease-in-out infinite; }
 @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+/* ---------- legal pages (terms / privacy) ---------- */
+.legal-page { max-width: 820px; margin: 0 auto; padding: 20px 24px 80px; color: var(--text, #e8e8ef); }
+.legal-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 0 20px; gap: 12px; flex-wrap: wrap; }
+.legal-bar .brand { font-weight: 800; font-size: 18px; text-decoration: none; color: inherit; }
+.legal-nav { display: flex; gap: 16px; font-weight: 600; }
+.legal-nav a, .footer-nav a { color: var(--muted); text-decoration: none; }
+.legal-nav a:hover, .footer-nav a:hover { color: var(--text, #fff); }
+.legal-page h1 { font-size: 34px; margin: 8px 0 4px; }
+.legal-updated { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+.legal-lede { font-size: 17px; line-height: 1.6; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+.legal-body h2 { font-size: 19px; margin: 28px 0 8px; }
+.legal-body p, .legal-body li { line-height: 1.65; color: var(--text, #d9d9e3); }
+.legal-body ul { padding-left: 20px; }
+.legal-foot { margin-top: 30px; }
+.legal-disclaimer { margin-top: 34px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 16px; }
+
+/* ---------- site footer ---------- */
+.site-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 18px 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; }
+.footer-nav { display: flex; gap: 16px; font-weight: 600; }
+
+/* ---------- landing page ---------- */
+.landing { max-width: 1000px; margin: 0 auto; padding: 0 24px 80px; color: var(--text, #e8e8ef); }
+.landing-bar { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; gap: 12px; flex-wrap: wrap; }
+.landing-bar .brand { font-weight: 800; font-size: 20px; }
+.landing-nav { display: flex; gap: 18px; align-items: center; font-weight: 600; }
+.landing-nav a { color: var(--muted); text-decoration: none; }
+.landing-nav a:hover { color: var(--text, #fff); }
+.landing-nav .btn { color: #fff; }
+.landing-hero { text-align: center; padding: 60px 0 40px; }
+.landing-hero h1 { font-size: 46px; line-height: 1.1; margin: 0 0 18px; }
+.landing-tagline { font-size: 19px; line-height: 1.6; color: var(--text, #d9d9e3); max-width: 680px; margin: 0 auto 28px; }
+.landing-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.landing-how, .landing-honest, .landing-app { margin: 56px 0; }
+.landing-how h2, .landing-honest h2, .landing-app h2 { text-align: center; font-size: 28px; margin-bottom: 26px; }
+.landing-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.landing-col { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+.landing-col h3 { font-size: 16px; margin: 0 0 8px; color: var(--accent, #7c5cff); }
+.landing-col p { line-height: 1.55; color: var(--text, #d9d9e3); font-size: 14px; }
+.landing-honest { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; text-align: center; }
+.landing-honest p { max-width: 720px; margin: 0 auto; line-height: 1.65; color: var(--text, #d9d9e3); }
+.landing-app { text-align: center; }
+.landing-app p { max-width: 620px; margin: 0 auto 24px; line-height: 1.6; color: var(--text, #d9d9e3); }
+.landing-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-top: 30px; margin-top: 40px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; }
+.landing-footer nav { display: flex; gap: 16px; }
+.landing-footer a { color: var(--muted); text-decoration: none; }
+.landing-footer a:hover { color: var(--text, #fff); }
+@media (max-width: 820px) { .landing-cols { grid-template-columns: 1fr 1fr; } .landing-hero h1 { font-size: 34px; } }
+@media (max-width: 480px) { .landing-cols { grid-template-columns: 1fr; } }
