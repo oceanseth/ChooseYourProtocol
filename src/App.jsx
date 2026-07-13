@@ -10,6 +10,7 @@ import Collection from './pages/Collection.jsx';
 import KnowledgeBase from './pages/KnowledgeBase.jsx';
 import Admin from './pages/Admin.jsx';
 import About from './pages/About.jsx';
+import Landing from './pages/Landing.jsx';
 import Terms from './pages/Terms.jsx';
 import Privacy from './pages/Privacy.jsx';
 
@@ -37,6 +38,7 @@ export default function App() {
   if (!user) {
     return (
       <Routes>
+        <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<Navigate to="/login" replace state={{ from: location }} />} />
       </Routes>
