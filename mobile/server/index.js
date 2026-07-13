@@ -3,6 +3,7 @@
 // Uses an LLM when a key is available; falls back to deterministic reasoning so the demo never breaks.
 
 const http = require('http');
+const routes = require('./routes');
 
 const PORT = process.env.PORT || 8787;
 const LLM_KEY = process.env.KYLON_API_TOKEN || process.env.ANTHROPIC_API_KEY || '';
@@ -158,8 +159,14 @@ const server = http.createServer(async (req, res) => {
     const llm = await llmResolve(goal);
     const result = llm || fallbackResolve(goal);
     result.source = llm ? 'llm' : 'fallback';
+    // v1: persist server-side so the group can hold >1 member; return its id.
+    result.id = routes.createGroupFromResolve(result, body.creator_name);
     return send(res, 200, result);
   }
+
+  // Delegate all group/feed/log/measure/seed/retire routes (contract v3).
+  const handled = await routes.handle(req, res, send, readBody);
+  if (handled) return;
 
   send(res, 404, { error: 'not found' });
 });

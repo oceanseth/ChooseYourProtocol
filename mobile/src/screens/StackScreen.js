@@ -39,7 +39,8 @@ export default function StackScreen() {
         )}
 
         {stack.map((g) => (
-          <View key={g.id} style={styles.card}>
+          <TouchableOpacity key={g.id} style={styles.card} activeOpacity={0.85}
+            onPress={() => router.push({ pathname: '/group/[id]', params: { id: g.groupId || 'pg_skin_warmcold' } })}>
             <Text style={styles.cardTitle}>{g.title}</Text>
             {!!g.goal && <Text style={styles.cardGoal}>Goal: {g.goal}</Text>}
             <Text style={styles.cardProto}>{g.protocol?.title}</Text>
@@ -47,8 +48,14 @@ export default function StackScreen() {
             <View style={styles.metricsRow}>
               {(g.metrics || []).map((m, i) => <MetricPill key={i} metric={m} />)}
             </View>
-          </View>
+            <Text style={styles.openHint}>Open group →</Text>
+          </TouchableOpacity>
         ))}
+
+        <TouchableOpacity style={styles.demoBtn} activeOpacity={0.85}
+          onPress={() => router.push({ pathname: '/group/[id]', params: { id: 'pg_skin_warmcold' } })}>
+          <Text style={styles.demoTxt}>Open demo group (Warm/Cold Face Reset)</Text>
+        </TouchableOpacity>
       </ScrollView>
 
       <TouchableOpacity style={styles.fab} onPress={() => router.push('/')}>
@@ -71,6 +78,9 @@ const styles = StyleSheet.create({
   cardProto: { color: theme.text, fontSize: 14, marginTop: 8 },
   cardCadence: { color: theme.textDim, fontSize: 12, marginTop: 4, marginBottom: 12 },
   metricsRow: { flexDirection: 'row', flexWrap: 'wrap' },
+  openHint: { color: theme.accent, fontSize: 12, fontWeight: '700', marginTop: 8 },
+  demoBtn: { backgroundColor: theme.cardAlt, borderColor: theme.border, borderWidth: 1, borderRadius: 14, padding: 15, alignItems: 'center', marginTop: 4 },
+  demoTxt: { color: theme.text, fontWeight: '700', fontSize: 14 },
   fab: { position: 'absolute', bottom: 28, left: 16, right: 16, backgroundColor: theme.accent, borderRadius: 16, padding: 16, alignItems: 'center' },
   fabText: { color: '#fff', fontWeight: '800', fontSize: 15 }
 });
