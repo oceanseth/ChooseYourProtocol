@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { LogoMark } from '../components/Logo.jsx';
 import { signInEmail, signUpEmail, signInGoogle } from '../firebase.js';
 import { DECK_URL } from './About.jsx';
 
@@ -40,7 +41,7 @@ export default function Login() {
   return (
     <div className="auth-page">
       <div className="auth-hero">
-        <h1>⊘ ChooseYourProtocol</h1>
+        <h1><LogoMark size={30} /> ChooseYourProtocol</h1>
         <p className="tagline">The modern smoke break. Agent-timed micro-activities that level up your people, your systems, and your culture.</p>
         <ul className="hero-points">
           <li>🤖 A desktop agent builds your knowledge base as you work</li>

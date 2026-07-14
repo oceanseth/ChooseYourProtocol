@@ -370,3 +370,8 @@ input:focus, select:focus { border-color: var(--primary); }
   .landing-cols { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 480px) { .landing-cols { grid-template-columns: 1fr; } .spotlight-phone { max-width: 240px; } }
+
+
+/* brand mark inline alignment */
+.splash-logo, .brand, .auth-hero h1 { display: inline-flex; align-items: center; gap: 8px; }
+.splash-logo svg, .brand svg, .auth-hero h1 svg { display: block; flex: 0 0 auto; }
