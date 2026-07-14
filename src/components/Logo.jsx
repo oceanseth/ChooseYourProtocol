@@ -20,12 +20,12 @@ export function LogoMark({ size = 28, className }) {
           <stop offset="1" stopColor="#7c5cff" />
         </linearGradient>
       </defs>
-      {/* top (widest) */}
-      <rect x="7"  y="9"  width="34" height="8" rx="4" fill="url(#sm-bar)" />
+      {/* top (narrowest) */}
+      <rect x="15" y="9"  width="18" height="8" rx="4" fill="url(#sm-bar)" />
       {/* middle */}
       <rect x="11" y="20" width="26" height="8" rx="4" fill="url(#sm-bar)" />
-      {/* bottom (narrowest) */}
-      <rect x="15" y="31" width="18" height="8" rx="4" fill="url(#sm-bar)" />
+      {/* bottom (widest) */}
+      <rect x="7"  y="31" width="34" height="8" rx="4" fill="url(#sm-bar)" />
     </svg>
   );
 }
