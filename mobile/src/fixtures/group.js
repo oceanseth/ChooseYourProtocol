@@ -61,6 +61,7 @@ export const FIXTURE_GROUP = {
   ],
   member_count: 8,
   synthetic_count: 6,
+  real_member_count: 2,
   metrics_state: [
     { metric_id: 'metric_pimple_count', logged_today: false, last_logged_at: '2026-07-12T09:10:00Z', current_value: 5 },
     { metric_id: 'metric_perceived_age', logged_today: true, last_logged_at: '2026-07-01T09:00:00Z', current_value: 29 }

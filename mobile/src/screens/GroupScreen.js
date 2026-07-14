@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, StyleSheet,
-  ActivityIndicator, RefreshControl
+  ActivityIndicator, RefreshControl, Alert
 } from 'react-native';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { theme } from '../lib/theme';
-import { getGroup } from '../lib/api';
+import { getGroup, leaveGroup } from '../lib/api';
 import { showSyntheticLabels } from '../lib/disclosure';
 import Avatar from '../components/Avatar';
 import Chip from '../components/Chip';
@@ -42,6 +42,51 @@ export default function GroupScreen() {
       setRefreshing(false);
     }
   }, [groupId]);
+
+  const [leaving, setLeaving] = useState(false);
+
+  const doLeave = useCallback(async () => {
+    try {
+      setLeaving(true);
+      const meMember = group && group.members.find((m) => m.user_id === 'usr_you');
+      const r = await leaveGroup(groupId, meMember && meMember.user_id);
+      if (r.group_outcome === 'deleted') {
+        // Group closed with the last real member — go home, it no longer exists.
+        router.replace('/stack');
+      } else {
+        // 'alive' or 'exempt' (freshly-seeded still in outreach window) — group persists.
+        router.replace('/stack');
+      }
+    } catch (e) {
+      Alert.alert('Couldn\u2019t leave', e.message);
+    } finally {
+      setLeaving(false);
+    }
+  }, [groupId, router]);
+
+  const confirmLeave = useCallback(() => {
+    // real_member_count drives light-vs-heavy confirm (contract v3.1 §3.7).
+    const lastReal = (group && group.real_member_count != null ? group.real_member_count : 1) <= 1;
+    if (lastReal) {
+      Alert.alert(
+        'Leave and close this group?',
+        "You\u2019re the only real member. Leaving will close this group and its AI-seeded members retire. This can\u2019t be undone.",
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Leave & close', style: 'destructive', onPress: doLeave }
+        ]
+      );
+    } else {
+      Alert.alert(
+        `Leave ${group ? group.title : 'this group'}?`,
+        'You can rejoin anytime.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Leave', style: 'destructive', onPress: doLeave }
+        ]
+      );
+    }
+  }, [group, doLeave]);
 
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
@@ -190,6 +235,16 @@ export default function GroupScreen() {
           );
         })}
       </View>
+
+      {/* Leave group — light or heavy confirm depending on real_member_count */}
+      <View style={styles.sec}>
+        <TouchableOpacity style={styles.leaveBtn} activeOpacity={0.8} disabled={leaving} onPress={confirmLeave}>
+          <Text style={styles.leaveTxt}>{leaving ? 'Leaving\u2026' : 'Leave group'}</Text>
+        </TouchableOpacity>
+        {(group.real_member_count != null ? group.real_member_count : 1) <= 1 && (
+          <Text style={styles.leaveHint}>You\u2019re the only real member — leaving closes this group.</Text>
+        )}
+      </View>
     </ScrollView>
   );
 }
@@ -254,5 +309,8 @@ const styles = StyleSheet.create({
   pbadge: { backgroundColor: 'rgba(124,92,255,0.16)', borderColor: '#4A3D78', borderWidth: 1, borderRadius: 5, paddingVertical: 1, paddingHorizontal: 6, marginRight: 7 },
   pbadgeTxt: { color: '#B8A6FF', fontSize: 9, fontWeight: '800', letterSpacing: 0.3 },
   feAction: { alignSelf: 'flex-start', marginTop: 9, backgroundColor: theme.accent, borderRadius: 10, paddingVertical: 8, paddingHorizontal: 14 },
-  feActionTxt: { color: '#fff', fontWeight: '800', fontSize: 13 }
+  feActionTxt: { color: '#fff', fontWeight: '800', fontSize: 13 },
+  leaveBtn: { borderColor: theme.danger, borderWidth: 1, borderRadius: 14, paddingVertical: 13, alignItems: 'center', marginTop: 4 },
+  leaveTxt: { color: theme.danger, fontWeight: '800', fontSize: 14 },
+  leaveHint: { color: theme.textDim, fontSize: 11, textAlign: 'center', marginTop: 8, paddingHorizontal: 16, lineHeight: 16 }
 });

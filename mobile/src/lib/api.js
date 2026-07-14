@@ -109,3 +109,19 @@ export async function logMetric(groupId, metricId, value, proofTier = 'self_repo
   if (!res.ok) throw new Error(`Log error (${res.status})`);
   return res.json();
 }
+
+// POST /groups/:groupId/leave — remove the caller (§3.7).
+// Returns { left, was_last_real_member, group_outcome: 'alive'|'deleted'|'exempt' }.
+export async function leaveGroup(groupId, userId) {
+  if (USE_FIXTURES) {
+    await wait(400);
+    return { left: true, was_last_real_member: true, group_outcome: 'deleted' };
+  }
+  const res = await fetch(`${API_BASE}/groups/${groupId}/leave`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userId ? { user_id: userId } : {})
+  });
+  if (!res.ok) throw new Error(`Leave error (${res.status})`);
+  return res.json();
+}
