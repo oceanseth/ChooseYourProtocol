@@ -10,6 +10,10 @@ const coach = require('./coach');
 
 const SEED_SECRET = process.env.STACKMAX_SEED_SECRET || 'dev-seed-secret';
 
+// Lifecycle rule (v3.1, re-integrated into v3.2): a group's life depends on its REAL member count.
+const DELETE_ON_SIGHT = process.env.STACKMAX_DELETE_SYNTHETIC_ON_SIGHT === '1';
+const SEEDING_WINDOW_MS = parseInt(process.env.STACKMAX_SEEDING_WINDOW_MS || String(14 * 864e5), 10);
+
 function match(url, pattern) {
   const uPath = url.split('?')[0].split('/').filter(Boolean);
   const pParts = pattern.split('/').filter(Boolean);
@@ -47,6 +51,7 @@ function createGroupFromResolve(result, creatorName) {
     goal_label: result.goal || '',
     visibility: 'public',
     is_seeded: false,
+    created_at: now(),
     metrics
   };
   const mid = id('usr');
@@ -56,6 +61,27 @@ function createGroupFromResolve(result, creatorName) {
   };
   persist();
   return gid;
+}
+
+function realMemberCount(groupId) {
+  return Object.values(db.members).filter((m) => m.group_id === groupId && !m.is_synthetic).length;
+}
+function deleteGroup(groupId) {
+  delete db.groups[groupId];
+  for (const [mid, m] of Object.entries(db.members)) if (m.group_id === groupId) delete db.members[mid];
+  for (const [eid, e] of Object.entries(db.entries)) if (e.group_id === groupId) delete db.entries[eid];
+  for (const [fid, f] of Object.entries(db.feed)) if (f.group_id === groupId) delete db.feed[fid];
+}
+function applyLifecycle(groupId) {
+  const g = db.groups[groupId];
+  if (!g) return 'deleted';
+  if (realMemberCount(groupId) > 0) return 'alive';
+  if (!DELETE_ON_SIGHT && g.is_seeded) {
+    const createdMs = new Date(g.created_at || 0).getTime();
+    if (Date.now() - createdMs < SEEDING_WINDOW_MS) return 'exempt';
+  }
+  deleteGroup(groupId);
+  return 'deleted';
 }
 
 async function handle(req, res, send, readBody) {
@@ -175,6 +201,25 @@ async function handle(req, res, send, readBody) {
     const members = Object.values(db.members).filter((m) => m.group_id === p.groupId);
     return send(res, 200, { seeded_members, seeded_entries,
       group: { member_count: members.length, synthetic_count: members.filter((m) => m.is_synthetic).length, is_seeded: true } }), true;
+  }
+
+  // POST /groups/:groupId/leave — remove the caller; may tear down a synthetic-only group.
+  if (method === 'POST' && (p = match(url, '/groups/:groupId/leave'))) {
+    const body = await readBody(req);
+    const g = db.groups[p.groupId];
+    if (!g) return send(res, 404, { error: 'group not found', code: 'group_not_found' }), true;
+    let caller = body.user_id
+      ? db.members[body.user_id]
+      : Object.values(db.members).find((m) => m.group_id === p.groupId && !m.is_synthetic);
+    if (!caller || caller.group_id !== p.groupId || caller.is_synthetic)
+      return send(res, 400, { error: 'caller is not a real member of this group', code: 'not_a_member' }), true;
+    const wasLastReal = realMemberCount(p.groupId) <= 1;
+    delete db.members[caller.id];
+    for (const [eid, e] of Object.entries(db.entries)) if (e.member_id === caller.id) delete db.entries[eid];
+    for (const [fid, f] of Object.entries(db.feed)) if (f.actor && f.actor.user_id === caller.id) delete db.feed[fid];
+    const outcome = applyLifecycle(p.groupId);
+    persist();
+    return send(res, 200, { left: true, was_last_real_member: wasLastReal, group_outcome: outcome }), true;
   }
 
   // POST /groups/:groupId/retire-synthetics (admin-only)

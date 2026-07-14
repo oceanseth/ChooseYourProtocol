@@ -49,3 +49,10 @@ correctly-stale) → agent group-announce (check_in) → agent 1:1 nudge (audien
 does NOT leak into shared feed) → forged is_synthetic 403 → wrong-secret 401 on check-in & seed →
 measure writes entry → retire (synthetics→0, is_seeded→false). Real vision proven: controlled
 5-blemish image → model returned value 5, confidence 0.95, strict-JSON shape.
+
+## v3.2.1 — lifecycle re-integration (regression fix)
+v3.2 (coach lane + real vision) was assembled on a pre-v3.1 base and DROPPED the v3.1 group
+lifecycle (`POST /groups/:id/leave` + `real_member_count`). DesignerPro's leave-group UI on `dev`
+was calling endpoints that 404. v3.2.1 re-integrates the v3.1 lifecycle on top of v3.2 so both
+coexist. Verified: 15/15 end-to-end checks green (coach lane, privacy boundary, auto-win,
+measure, AND the full leave/exempt/delete/404/400 lifecycle matrix).

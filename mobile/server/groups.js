@@ -94,6 +94,7 @@ function groupDetail(groupId, currentMemberId) {
     .filter((m) => m.group_id === groupId)
     .sort((a, b) => (a.role === 'proposer' ? -1 : 0) - (b.role === 'proposer' ? -1 : 0));
   const synthetic_count = members.filter((m) => m.is_synthetic).length;
+  const real_member_count = members.length - synthetic_count;
   const feed = feedFor(groupId, { audience: 'group' });
   const first = feed.slice(0, 10);
   const feed_next_before = feed.length > 10 ? feed[9].created_at : null;
@@ -109,6 +110,7 @@ function groupDetail(groupId, currentMemberId) {
     members: members.map((m) => memberView(m, metrics)),
     member_count: members.length,
     synthetic_count,
+    real_member_count,
     metrics_state: me ? metricsStateForMember(me, metrics) : [],
     feed: first,
     feed_next_before
