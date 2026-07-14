@@ -147,6 +147,24 @@ Once infrastructure exists, **pushing to the repository triggers GitHub Actions*
 
 ---
 
+## Social media strategy
+
+Our social growth engine is anchored to marquee, named protocols with a built-in audience — the first being **Taryn Southern's "Pinkprint Protocol."**
+
+**The thesis:** Bryan Johnson's Blueprint has generated an enormous dataset on optimizing health for an aging *man*. But that playbook doesn't map cleanly onto women's biology. The open question — *how do we optimize health for women?* — is exactly the kind of shared problem space StackMax is built to own.
+
+The **Pinkprint Protocol** is Taryn Southern's answer: a women-focused alternative to Blueprint. Users follow it by joining **her Protocol Group on StackMax**, where progress is tracked, measured, and shared with an accountability community.
+
+**How this drives social:**
+- **Named-creator protocols are the hook.** A recognizable person with an existing following (Taryn) gives each protocol a face, a story, and a reason to share — far more shareable than a generic tracker.
+- **The content is the proof.** Progress photos, lab metrics, and scan data inside the group are native, credible social content — the community generates the posts, and StackMax amplifies them.
+- **Join = follow.** Every piece of Pinkprint content routes to a single action: join Taryn's Protocol Group on StackMax and start tracking.
+
+This is the template. Each future marquee protocol pairs a credible owner with a distinct, underserved problem space — and each becomes its own social channel.
+
+
+---
+
 ## License
 
 See repository for license details.
