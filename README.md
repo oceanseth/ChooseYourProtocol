@@ -62,12 +62,6 @@ Every automated check-in follows a fixed shape, capped under 120 words:
 
 ---
 
-## Social media strategy
-
-Our launch narrative leans on the "protocol" category conversation. The anchor is **Taryn Southern's "Pinkprint Protocol"** — a women-focused alternative to Bryan Johnson's Blueprint. As Bryan Johnson has built a large audience around a quantified-longevity protocol, StackMax positions "choose *your* protocol" as the accessible, community-accountable version for everyone's goal — not just longevity, and not just one person's stack. Content ties real protocol categories (skin, strength, sleep, recovery) to the accountability-group hook.
-
----
-
 ## Architecture & stack
 
 | Layer | Technology |
