@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import appPreview from '../assets/app-preview.png';
 
 const GITHUB_URL = 'https://github.com/oceanseth/ChooseYourProtocol';
 
@@ -24,7 +25,9 @@ export default function Landing() {
         </p>
         <div className="landing-cta">
           <a className="btn btn-primary btn-lg" href="#get-the-app">Get the app</a>
-          <a className="btn btn-ghost btn-lg" href={GITHUB_URL} target="_blank" rel="noreferrer">View on GitHub</a>
+        </div>
+        <div className="landing-hero-shot">
+          <img src={appPreview} alt="StackMax app on iPhone showing a protocol dashboard with a 12-day streak and daily check-ins" loading="lazy" />
         </div>
       </section>
 

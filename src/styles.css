@@ -291,3 +291,8 @@ input:focus, select:focus { border-color: var(--primary); }
 .landing-footer a:hover { color: var(--text, #fff); }
 @media (max-width: 820px) { .landing-cols { grid-template-columns: 1fr 1fr; } .landing-hero h1 { font-size: 34px; } }
 @media (max-width: 480px) { .landing-cols { grid-template-columns: 1fr; } }
+
+/* Landing hero app preview (iPhone mockup) */
+.landing-hero-shot { margin: 40px auto 0; max-width: 340px; }
+.landing-hero-shot img { width: 100%; height: auto; display: block; filter: drop-shadow(0 24px 48px rgba(0,0,0,0.28)); }
+@media (max-width: 820px) { .landing-hero-shot { max-width: 260px; margin-top: 28px; } }
