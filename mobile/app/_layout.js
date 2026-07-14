@@ -16,6 +16,8 @@ export default function Layout() {
       >
         <Stack.Screen name="index" options={{ title: 'StackMax · Max' }} />
         <Stack.Screen name="stack" options={{ title: 'StackMax' }} />
+        <Stack.Screen name="group/[id]" options={{ title: 'Group' }} />
+        <Stack.Screen name="capture/[groupId]" options={{ title: 'Measure', presentation: 'modal' }} />
       </Stack>
     </>
   );

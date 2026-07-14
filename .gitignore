@@ -37,3 +37,5 @@ agent/agent.config.json
 mobile/node_modules/
 mobile/.expo/
 dist/
+
+mobile/server/.data/
