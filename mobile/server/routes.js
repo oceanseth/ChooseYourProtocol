@@ -1,21 +1,16 @@
-// Contract v3 endpoints: groups, feed, log, measure, seed, retire.
+// Contract v3.2 endpoints: groups, feed, log, measure, seed, retire, check-in.
 // index.js delegates any route it doesn't handle here.
+// v3.2 (SeniorDev): feed events carry `audience` ('group'|'user'); `win` is a
+// first-class event type; managing-agent surfaces via POST /groups/:id/check-in;
+// /measure wires real vision (coach.measureVision) with graceful stub fallback.
 const store = require('./store');
 const { db, id, now, persist } = store;
 const groups = require('./groups');
+const coach = require('./coach');
 
 const SEED_SECRET = process.env.STACKMAX_SEED_SECRET || 'dev-seed-secret';
 
-// Lifecycle rule (Seth's call, defaulted to the team recommendation):
-// a group's life depends on its REAL member count; synthetics never keep it alive.
-// EXEMPT_SEEDING_WINDOW: a freshly-seeded group with 0 real members is NOT auto-deleted
-// while inside its active seeding/outreach window, so outreach can bring the first real user.
-// Set STACKMAX_DELETE_SYNTHETIC_ON_SIGHT=1 to delete any synthetic-only group immediately.
-const DELETE_ON_SIGHT = process.env.STACKMAX_DELETE_SYNTHETIC_ON_SIGHT === '1';
-const SEEDING_WINDOW_MS = parseInt(process.env.STACKMAX_SEEDING_WINDOW_MS || String(14 * 864e5), 10);
-
 function match(url, pattern) {
-  // pattern like /groups/:groupId/feed -> returns params or null
   const uPath = url.split('?')[0].split('/').filter(Boolean);
   const pParts = pattern.split('/').filter(Boolean);
   if (uPath.length !== pParts.length) return null;
@@ -31,7 +26,6 @@ function query(url) {
   return Object.fromEntries(new URLSearchParams(q));
 }
 
-// Persist a resolved group (called from /resolve path). Returns group id.
 function createGroupFromResolve(result, creatorName) {
   const gid = id('pg');
   const metrics = (result.metrics || []).map((m) => ({
@@ -53,7 +47,6 @@ function createGroupFromResolve(result, creatorName) {
     goal_label: result.goal || '',
     visibility: 'public',
     is_seeded: false,
-    created_at: now(),
     metrics
   };
   const mid = id('usr');
@@ -65,39 +58,11 @@ function createGroupFromResolve(result, creatorName) {
   return gid;
 }
 
-function realMemberCount(groupId) {
-  return Object.values(db.members).filter((m) => m.group_id === groupId && !m.is_synthetic).length;
-}
-
-// Tear down a group entirely: delete group, its members (incl. synthetics), entries, feed.
-function deleteGroup(groupId) {
-  delete db.groups[groupId];
-  for (const [mid, m] of Object.entries(db.members)) if (m.group_id === groupId) delete db.members[mid];
-  for (const [eid, e] of Object.entries(db.entries)) if (e.group_id === groupId) delete db.entries[eid];
-  for (const [fid, f] of Object.entries(db.feed)) if (f.group_id === groupId) delete db.feed[fid];
-}
-
-// Apply the all-synthetic lifecycle rule to one group. Returns 'deleted' | 'exempt' | 'alive'.
-function applyLifecycle(groupId) {
-  const g = db.groups[groupId];
-  if (!g) return 'deleted';
-  if (realMemberCount(groupId) > 0) return 'alive';
-  // synthetic-only from here
-  if (!DELETE_ON_SIGHT && g.is_seeded) {
-    const createdMs = new Date(g.created_at || 0).getTime();
-    const inWindow = Date.now() - createdMs < SEEDING_WINDOW_MS;
-    if (inWindow) return 'exempt';   // freshly-seeded, still inside outreach window
-  }
-  deleteGroup(groupId);
-  return 'deleted';
-}
-
-// Returns true if it handled the request.
 async function handle(req, res, send, readBody) {
   const { url, method } = req;
   let p;
 
-  // GET /groups/:groupId
+  // GET /groups/:groupId  (optional ?as=<member_id> for 1:1 feed scoping)
   if (method === 'GET' && (p = match(url, '/groups/:groupId'))) {
     const q = query(url);
     const detail = groups.groupDetail(p.groupId, q.as || null);
@@ -105,11 +70,11 @@ async function handle(req, res, send, readBody) {
     return send(res, 200, detail), true;
   }
 
-  // GET /groups/:groupId/feed
+  // GET /groups/:groupId/feed   (?audience=group|user & ?as=<member_id> for the 1:1 lane)
   if (method === 'GET' && (p = match(url, '/groups/:groupId/feed'))) {
     const q = query(url);
     const limit = Math.min(parseInt(q.limit || '20', 10), 100);
-    let feed = groups.feedFor(p.groupId);
+    let feed = groups.feedFor(p.groupId, { audience: q.audience || null, memberId: q.as || null });
     if (q.before) feed = feed.filter((e) => new Date(e.created_at) < new Date(q.before));
     const page = feed.slice(0, limit);
     const next = feed.length > limit ? page[page.length - 1].created_at : null;
@@ -138,7 +103,7 @@ async function handle(req, res, send, readBody) {
     if (streak.current > 0 && streak.current % 7 === 0) {
       milestone = { type: 'streak', summary: `${streak.current}-day streak!` };
       const fid = id('evt');
-      db.feed[fid] = { id: fid, group_id: p.groupId, type: 'streak',
+      db.feed[fid] = { id: fid, group_id: p.groupId, type: 'streak', audience: 'group', target_member_id: null,
         actor: { user_id: me.id, display_name: me.display_name, is_synthetic: false },
         metric_id: metric.id, summary: milestone.summary, proof_tier: db.entries[eid].proof_tier, action: null, created_at: now() };
       persist();
@@ -146,11 +111,32 @@ async function handle(req, res, send, readBody) {
     return send(res, 200, { entry: db.entries[eid], streak, milestone }), true;
   }
 
-  // POST /groups/:groupId/measure  (JSON reuse path: {metric_id, image_ref})
-  // NOTE: multipart default path handled in index.js where raw body is available.
+  // POST /groups/:groupId/measure  (JSON reuse path: {metric_id, image_ref, image_base64})
   if (method === 'POST' && (p = match(url, '/groups/:groupId/measure'))) {
     const body = await readBody(req);
-    return handleMeasure(p.groupId, body.metric_id, body.image_ref, null, send, res), true;
+    return (await handleMeasure(p.groupId, body.metric_id, body.image_ref, body.image_base64, send, res)), true;
+  }
+
+  // POST /groups/:groupId/check-in  (managing agent -> feed; admin/agent secret)
+  // body: { type:'check_in'|'win', audience:'group'|'user', summary, metric_id?,
+  //         action?, target_member_id?, auto_win_for_member?, proof_tier? }
+  if (method === 'POST' && (p = match(url, '/groups/:groupId/check-in'))) {
+    if ((req.headers['x-seed-secret'] || '') !== SEED_SECRET)
+      return send(res, 401, { error: 'check-in requires admin/agent secret', code: 'seed_unauthorized' }), true;
+    const body = await readBody(req);
+    const g = db.groups[p.groupId];
+    if (!g) return send(res, 404, { error: 'group not found', code: 'group_not_found' }), true;
+    let payload = { ...body };
+    // Convenience: auto-detect a win from a member's real trajectory.
+    if (body.auto_win_for_member && body.metric_id) {
+      const metric = g.metrics.find((m) => m.id === body.metric_id);
+      const summary = metric ? coach.detectWin(p.groupId, body.auto_win_for_member, metric) : null;
+      if (!summary) return send(res, 200, { skipped: true, reason: 'no celebratable win found' }), true;
+      payload = { type: 'win', audience: body.audience || 'group', summary, metric_id: body.metric_id, proof_tier: 'photo' };
+    }
+    const r = coach.emitAgentEvent(p.groupId, payload);
+    if (r.error) return send(res, r.status, { error: r.error, code: r.code }), true;
+    return send(res, 200, { event: r.event }), true;
   }
 
   // POST /groups/:groupId/seed  (admin-only)
@@ -178,6 +164,7 @@ async function handle(req, res, send, readBody) {
       for (const f of (m.feed_events || [])) {
         const fid = id('evt');
         db.feed[fid] = { id: fid, group_id: p.groupId, type: f.type || 'win',
+          audience: f.audience || 'group', target_member_id: null,
           actor: { user_id: mid, display_name: m.display_name, is_synthetic: true },
           metric_id: f.metric_id || null, summary: f.summary || '', proof_tier: f.proof_tier || 'self_report',
           action: null, created_at: f.created_at || now() };
@@ -188,32 +175,6 @@ async function handle(req, res, send, readBody) {
     const members = Object.values(db.members).filter((m) => m.group_id === p.groupId);
     return send(res, 200, { seeded_members, seeded_entries,
       group: { member_count: members.length, synthetic_count: members.filter((m) => m.is_synthetic).length, is_seeded: true } }), true;
-  }
-
-  // POST /groups/:groupId/leave — remove the caller from the group's real members.
-  // If that leaves the group synthetic-only, apply the lifecycle rule (may delete the group).
-  if (method === 'POST' && (p = match(url, '/groups/:groupId/leave'))) {
-    const body = await readBody(req);
-    const g = db.groups[p.groupId];
-    if (!g) return send(res, 404, { error: 'group not found', code: 'group_not_found' }), true;
-    // Resolve the caller: explicit user_id, else the group's (single) real member for demo.
-    let caller = body.user_id
-      ? db.members[body.user_id]
-      : Object.values(db.members).find((m) => m.group_id === p.groupId && !m.is_synthetic);
-    if (!caller || caller.group_id !== p.groupId || caller.is_synthetic)
-      return send(res, 400, { error: 'caller is not a real member of this group', code: 'not_a_member' }), true;
-    const wasLastReal = realMemberCount(p.groupId) <= 1;
-    // remove the caller + their entries + their feed events
-    delete db.members[caller.id];
-    for (const [eid, e] of Object.entries(db.entries)) if (e.member_id === caller.id) delete db.entries[eid];
-    for (const [fid, f] of Object.entries(db.feed)) if (f.actor && f.actor.user_id === caller.id) delete db.feed[fid];
-    const outcome = applyLifecycle(p.groupId);
-    persist();
-    return send(res, 200, {
-      left: true,
-      was_last_real_member: wasLastReal,
-      group_outcome: outcome   // 'deleted' | 'exempt' | 'alive'
-    }), true;
   }
 
   // POST /groups/:groupId/retire-synthetics (admin-only)
@@ -236,17 +197,30 @@ async function handle(req, res, send, readBody) {
   return false;
 }
 
-// Shared measure logic (used by JSON reuse path + multipart path in index.js).
-function handleMeasure(groupId, metricId, imageRef, visionResult, send, res) {
+// Shared measure logic. Now calls real vision (coach.measureVision) and falls back
+// to a deterministic stub only when vision is unavailable, so the demo never breaks.
+async function handleMeasure(groupId, metricId, imageRef, imageBase64, send, res) {
   const g = db.groups[groupId];
   if (!g) return send(res, 404, { error: 'group not found', code: 'group_not_found' });
   const metric = g.metrics.find((m) => m.id === metricId);
   if (!metric) return send(res, 400, { error: 'unknown metric_id', code: 'unknown_metric' });
   const me = Object.values(db.members).find((m) => m.group_id === groupId && !m.is_synthetic);
   if (!me) return send(res, 400, { error: 'no member', code: 'no_member' });
-  // visionResult is injected by the vision pipeline; stub deterministic value if absent (pre-wiring).
-  const value = visionResult ? visionResult.value : 3;
-  const confidence = visionResult ? visionResult.confidence : 0.5;
+
+  let vision = null;
+  try { vision = await coach.measureVision(metric, imageRef, imageBase64); } catch { vision = null; }
+
+  // Low-confidence result: surface the confidence-warning path (contract §3.4).
+  if (vision && vision.value == null) {
+    return send(res, 200, {
+      metric_id: metricId, value: null, proof_tier: 'photo', confidence: vision.confidence,
+      image_ref: imageRef || null, measured_at: now(), entry_id: null,
+      needs_retake: true, detail: vision.detail
+    });
+  }
+
+  const value = vision ? vision.value : 3;
+  const confidence = vision ? vision.confidence : 0.5;
   const eid = id('pe');
   db.entries[eid] = { id: eid, member_id: me.id, group_id: groupId, metric_id: metricId,
     value, proof_tier: 'photo', is_synthetic: false, image_ref: imageRef || null, timestamp: now() };
@@ -254,7 +228,7 @@ function handleMeasure(groupId, metricId, imageRef, visionResult, send, res) {
   return send(res, 200, {
     metric_id: metricId, value, proof_tier: 'photo', confidence,
     image_ref: imageRef || null, measured_at: now(), entry_id: eid,
-    detail: visionResult ? visionResult.detail : { model: 'stub', notes: 'vision not yet wired' }
+    detail: vision ? vision.detail : { model: 'stub', notes: 'vision unavailable (no LLM key) — deterministic fallback' }
   });
 }
 

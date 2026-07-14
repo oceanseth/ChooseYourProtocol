@@ -73,10 +73,16 @@ function metricsStateForMember(memberId, metrics) {
   });
 }
 
-function feedFor(groupId) {
-  return Object.values(db.feed)
-    .filter((e) => e.group_id === groupId)
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+function feedFor(groupId, opts) {
+  const o = opts || {};
+  let items = Object.values(db.feed).filter((e) => e.group_id === groupId);
+  if (o.audience === 'group') {
+    items = items.filter((e) => (e.audience || 'group') === 'group');
+  } else if (o.audience === 'user') {
+    // The 1:1 lane for a specific member: their private events only.
+    items = items.filter((e) => (e.audience === 'user') && (!o.memberId || e.target_member_id === o.memberId));
+  }
+  return items.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 }
 
 // ---- public builders ----
@@ -88,8 +94,7 @@ function groupDetail(groupId, currentMemberId) {
     .filter((m) => m.group_id === groupId)
     .sort((a, b) => (a.role === 'proposer' ? -1 : 0) - (b.role === 'proposer' ? -1 : 0));
   const synthetic_count = members.filter((m) => m.is_synthetic).length;
-  const real_member_count = members.length - synthetic_count;
-  const feed = feedFor(groupId);
+  const feed = feedFor(groupId, { audience: 'group' });
   const first = feed.slice(0, 10);
   const feed_next_before = feed.length > 10 ? feed[9].created_at : null;
   const me = currentMemberId || (members.find((m) => !m.is_synthetic) || {}).id;
@@ -104,7 +109,6 @@ function groupDetail(groupId, currentMemberId) {
     members: members.map((m) => memberView(m, metrics)),
     member_count: members.length,
     synthetic_count,
-    real_member_count,
     metrics_state: me ? metricsStateForMember(me, metrics) : [],
     feed: first,
     feed_next_before
