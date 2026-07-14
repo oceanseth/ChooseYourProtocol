@@ -9,15 +9,27 @@
     "backgroundColor": "#0B0B0F",
     "splash": {
       "backgroundColor": "#0B0B0F",
-      "resizeMode": "contain"
+      "resizeMode": "contain",
+      "image": "./assets/splash.png"
     },
-    "ios": { "supportsTablet": true },
+    "ios": {
+      "supportsTablet": true
+    },
     "android": {
-      "adaptiveIcon": { "backgroundColor": "#0B0B0F" }
+      "adaptiveIcon": {
+        "backgroundColor": "#0B0B0F",
+        "foregroundImage": "./assets/adaptive-icon.png"
+      }
     },
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router"
+    ],
     "extra": {
       "apiBaseUrl": "http://localhost:8787"
+    },
+    "icon": "./assets/icon.png",
+    "web": {
+      "favicon": "./assets/favicon.png"
     }
   }
 }
