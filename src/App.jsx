@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { LogoMark } from './components/Logo.jsx';
 import { useAuth } from './auth.jsx';
 import Layout from './components/Layout.jsx';
 import Login from './pages/Login.jsx';
@@ -17,7 +18,7 @@ import Privacy from './pages/Privacy.jsx';
 function Splash({ text = 'Loading…' }) {
   return (
     <div className="splash">
-      <div className="splash-logo">⊘ ChooseYourProtocol</div>
+      <div className="splash-logo"><LogoMark size={26} /> ChooseYourProtocol</div>
       <div className="spinner" />
       <p>{text}</p>
     </div>

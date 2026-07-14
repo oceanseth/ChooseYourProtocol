@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
+import { LogoMark } from './Logo.jsx';
 import { useAuth } from '../auth.jsx';
 import {
   db, collection, query, where, onSnapshot, doc, updateDoc
@@ -55,7 +56,7 @@ export default function Layout() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <div className="brand">⊘ <span>ChooseYourProtocol</span></div>
+        <div className="brand"><LogoMark size={22} /> <span>ChooseYourProtocol</span></div>
         <nav className="nav">
           <NavLink to="/" end>Dashboard</NavLink>
           <NavLink to="/activity">Level Up</NavLink>
