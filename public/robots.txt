@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://chooseyourprotocol.com/sitemap.xml
