@@ -1,11 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import appPreview from '../assets/app-preview.png';
+import step1 from '../assets/steps/step1.webp';
+import step2 from '../assets/steps/step2.webp';
+import step3 from '../assets/steps/step3.webp';
+import step4 from '../assets/steps/step4.webp';
 import { Wordmark, LogoMark } from '../components/Logo.jsx';
 
 const GITHUB_URL = 'https://github.com/oceanseth/ChooseYourProtocol';
 
 export default function Landing() {
+  useEffect(() => {
+    // Progressive enhancement: if the browser lacks scroll-driven animations,
+    // reveal steps with IntersectionObserver instead. Respect reduced motion.
+    const supportsTimeline = CSS && CSS.supports && CSS.supports('animation-timeline: view()');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (supportsTimeline || reduce) return;
+    const track = document.querySelector('.how-track');
+    if (track) track.classList.add('js-anim'); // hide first, reveal on scroll
+    const steps = document.querySelectorAll('.how-step');
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add('in-view'); }),
+      { threshold: 0.25 }
+    );
+    steps.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
   return (
     <div className="landing">
       <header className="landing-bar">
@@ -55,40 +76,66 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="landing-how">
-        <h2>How it works</h2>
-        <div className="landing-cols">
-          <div className="landing-col">
-            <span className="step-num">1</span>
-            <h3>Tell Max a goal</h3>
-            <p>Even a vague one — "I want good skin." Max, your accountability coach, turns it into a concrete protocol.</p>
-          </div>
-          <div className="landing-col">
-            <span className="step-num">2</span>
-            <h3>Get measured metrics</h3>
-            <p>Max picks what to track and how often — pimple count from a daily photo, perceived age monthly — with the proof to back each win.</p>
-          </div>
-          <div className="landing-col">
-            <span className="step-num">3</span>
-            <h3>Join a protocol group</h3>
-            <p>Every goal becomes a group of people running the same protocol. See their streaks, celebrate wins, stay accountable.</p>
-          </div>
-          <div className="landing-col">
-            <span className="step-num">4</span>
-            <h3>Prove it</h3>
-            <p>Progress is verified — photo, device, or lab — not just self-reported. Provable wins, real streaks, honest data.</p>
-          </div>
+      <section className="how" id="how">
+        <div className="how-head">
+          <span className="landing-eyebrow">How it works</span>
+          <h2>Four steps from goal to proof.</h2>
+        </div>
+
+        <div className="how-track">
+          <div className="how-spine" aria-hidden="true"><span className="how-spine-fill" /></div>
+
+          <article className="how-step">
+            <div className="how-copy">
+              <span className="how-num">1</span>
+              <h3>Tell Max a goal</h3>
+              <p>Even a vague one. Max turns "I want good skin" into a real protocol.</p>
+            </div>
+            <div className="how-shot"><img src={step1} alt="StackMax chat onboarding: Max the AI coach turning a goal into a suggested protocol" loading="lazy" /></div>
+          </article>
+
+          <article className="how-step reverse">
+            <div className="how-copy">
+              <span className="how-num">2</span>
+              <h3>Get measured metrics</h3>
+              <p>Objective data, not vibes. Max decides what to track and how often.</p>
+            </div>
+            <div className="how-shot"><img src={step2} alt="StackMax metrics dashboard: pimple count trending down 72% with a daily photo strip" loading="lazy" /></div>
+          </article>
+
+          <article className="how-step">
+            <div className="how-copy">
+              <span className="how-num">3</span>
+              <h3>Join a protocol group</h3>
+              <p>Real people running the same protocol. Streaks, wins, accountability.</p>
+            </div>
+            <div className="how-shot"><img src={step3} alt="StackMax community feed: a 248-member Clear Skin Protocol group with streak leaderboard" loading="lazy" /></div>
+          </article>
+
+          <article className="how-step reverse">
+            <div className="how-copy">
+              <span className="how-num">4</span>
+              <h3>Prove it</h3>
+              <p>Photo, device, or lab — verified, not self-reported. Provable wins.</p>
+            </div>
+            <div className="how-shot"><img src={step4} alt="StackMax verified win: a before/after with a green Verified badge and shareable win card" loading="lazy" /></div>
+          </article>
         </div>
       </section>
 
-      <section className="landing-honest">
-        <h2>Built honest</h2>
-        <p>
-          StackMax is an <strong>AI-orchestrated community</strong>. Some participants and content are
-          AI-generated to help new groups grow, and are labeled as such. We don't guarantee the accuracy
-          of any measurement or claim. By using StackMax you agree to our{' '}
-          <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link>.
-        </p>
+      <section className="honest">
+        <div className="honest-panel">
+          <LogoMark size={34} />
+          <h2>We build in the open.</h2>
+          <p className="honest-lead">
+            StackMax is an <strong>AI-orchestrated community</strong>. Some participants and content are
+            AI-generated to help new groups grow — and we always label them.
+          </p>
+          <p className="honest-fine">
+            We don't guarantee the accuracy of any measurement or claim. By using StackMax you agree to our{' '}
+            <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link>.
+          </p>
+        </div>
       </section>
 
       <footer className="landing-footer">
