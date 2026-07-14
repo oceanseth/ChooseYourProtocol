@@ -340,7 +340,6 @@ input:focus, select:focus { border-color: var(--primary); }
 .spotlight-device { display: flex; justify-content: center; }
 .spotlight-phone {
   width: 100%; max-width: 300px; height: auto; display: block;
-  filter: drop-shadow(0 26px 46px rgba(20,10,50,0.30));
 }
 
 /* how-it-works */
