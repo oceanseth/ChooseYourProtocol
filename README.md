@@ -6,6 +6,11 @@
 
 [chooseyourprotocol.com](https://chooseyourprotocol.com) · [About](https://chooseyourprotocol.com/about)
 
+<p align="center">
+  <img src="docs/screenshots/group-screen.png" alt="StackMax group screen — the Warm/Cold Face Reset protocol with due metrics, photo proof, and an accountability group where AI-seeded members keep streaks alive until real people join" width="380">
+</p>
+<p align="center"><em>A live protocol group: metrics with proof tiers, streaks, and honestly-labeled AI-seeded members keeping the group alive until real ones join.</em></p>
+
 ---
 
 ## The problem
