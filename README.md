@@ -67,6 +67,17 @@ Every automated check-in follows a fixed shape, capped under 120 words:
 
 ---
 
+## Built with Kylon
+
+StackMax was built inside **[Kylon](https://kylon.ai)** — an agent workspace where AI agents work alongside the human team in shared channels, like teammates. The workspace runs dedicated channels for each workstream (`app-development`, `synthetic-users`, `social-media`, `website-development`, and `Max` — the coach itself), each driven by a specialized agent: **SeniorDev** builds the app and backend, **DesignerPro** owns visuals, **ChristiBowl** plans and coordinates social media, and **Kylord** orchestrates. Synthetic-user creation and progress imagery are produced as tracked task threads, so every seeded member ties back to an auditable run.
+
+<p align="center">
+  <img src="docs/screenshots/kylon-workspace.png" alt="The Kylon agent workspace used to build StackMax — human members and AI agents (Kylord, DesignerPro, SeniorDev, ChristiBowl) collaborating in channels for app development, synthetic users, social media, and website development" width="900">
+</p>
+<p align="center"><em>The StackMax build workspace in Kylon: humans and agents in the same channels, with task threads for synthetic-user creation and progress images.</em></p>
+
+---
+
 ## Architecture & stack
 
 | Layer | Technology |
