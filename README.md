@@ -4,7 +4,7 @@
 
 > Tell an AI coach what you want to improve. It turns your fuzzy goal into a concrete **protocol** with measured metrics and a cadence, drops you into a **group** of people chasing the same thing, and holds you accountable with proof-of-work check-ins. When a brand-new group would otherwise be empty, it's seeded with clearly-labeled synthetic members so it feels alive from day one — and folds itself up honestly once no real people remain.
 
-[chooseyourprotocol.com](https://chooseyourprotocol.com) · [About](https://chooseyourprotocol.com/about)
+[chooseyourprotocol.com](https://chooseyourprotocol.com) · [About](https://chooseyourprotocol.com/about) · [▶ Watch the 60-second demo](docs/stackmax-demo.mp4)
 
 <p align="center">
   <img src="docs/screenshots/group-screen.png" alt="StackMax group screen — the Warm/Cold Face Reset protocol with due metrics, photo proof, and an accountability group where AI-seeded members keep streaks alive until real people join" width="380">
