@@ -336,15 +336,12 @@ input:focus, select:focus { border-color: var(--primary); }
 .spotlight-copy p { font-size: 17px; line-height: 1.6; color: var(--spot-muted); max-width: 440px; margin: 0 0 26px; }
 .spotlight-cta { justify-content: flex-start; }
 
-/* device frame — the phone now sits in a real bezel, not a raw PNG */
+/* the app-preview PNG is already a rendered iPhone — place it directly, no extra frame */
 .spotlight-device { display: flex; justify-content: center; }
-.device-frame {
-  position: relative; width: 260px; padding: 12px; border-radius: 42px;
-  background: linear-gradient(160deg, #23202e, #0c0b12);
-  box-shadow: 0 30px 60px rgba(20,10,50,0.35), 0 2px 0 rgba(255,255,255,0.12) inset, 0 0 0 2px rgba(0,0,0,0.4);
+.spotlight-phone {
+  width: 100%; max-width: 300px; height: auto; display: block;
+  filter: drop-shadow(0 26px 46px rgba(20,10,50,0.30));
 }
-.device-frame img { width: 100%; height: auto; display: block; border-radius: 30px; }
-.device-notch { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 96px; height: 22px; background: #0c0b12; border-radius: 0 0 14px 14px; z-index: 2; }
 
 /* how-it-works */
 .landing-how, .landing-honest { margin: 96px 0; }
@@ -373,4 +370,4 @@ input:focus, select:focus { border-color: var(--primary); }
   .spotlight-copy .spotlight-eyebrow { justify-content: center; }
   .landing-cols { grid-template-columns: 1fr 1fr; }
 }
-@media (max-width: 480px) { .landing-cols { grid-template-columns: 1fr; } .device-frame { width: 220px; } }
+@media (max-width: 480px) { .landing-cols { grid-template-columns: 1fr; } .spotlight-phone { max-width: 240px; } }

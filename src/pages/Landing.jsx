@@ -25,10 +25,6 @@ export default function Landing() {
           keeps you honest. Track it, prove it, and level up alongside people chasing the same thing —
           coached by an AI accountability agent that decides what to measure and how often.
         </p>
-        <div className="landing-cta">
-          <a className="btn btn-primary btn-lg" href="#get-the-app">Get the app</a>
-          <Link className="btn btn-ghost btn-lg" to="/login">I have an account →</Link>
-        </div>
       </section>
 
       {/* Shaped light "spotlight" panel — the phone lives inside a device frame,
@@ -45,21 +41,16 @@ export default function Landing() {
               while we build in the open.
             </p>
             <div className="landing-cta spotlight-cta">
-              <a className="btn btn-primary btn-lg" href={GITHUB_URL} target="_blank" rel="noreferrer">
-                ⭐ Star us on GitHub
-              </a>
-              <Link className="btn btn-outline btn-lg" to="/login">I have an account →</Link>
+              <Link className="btn btn-primary btn-lg" to="/login">Get the app</Link>
             </div>
           </div>
           <div className="spotlight-device">
-            <div className="device-frame">
-              <span className="device-notch" aria-hidden="true" />
-              <img
-                src={appPreview}
-                alt="StackMax app on iPhone showing a protocol dashboard with a 12-day streak and daily check-ins"
-                loading="lazy"
-              />
-            </div>
+            <img
+              className="spotlight-phone"
+              src={appPreview}
+              alt="StackMax app on iPhone showing a protocol dashboard with a 12-day streak and daily check-ins"
+              loading="lazy"
+            />
           </div>
         </div>
       </section>
