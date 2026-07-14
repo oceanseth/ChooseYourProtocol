@@ -86,8 +86,8 @@ export default function Landing() {
           <div className="how-spine" aria-hidden="true"><span className="how-spine-fill" /></div>
 
           <article className="how-step">
+            <div className="how-num" aria-hidden="true"><span>1</span></div>
             <div className="how-copy">
-              <span className="how-num">1</span>
               <h3>Tell Max a goal</h3>
               <p>Even a vague one. Max turns "I want good skin" into a real protocol.</p>
             </div>
@@ -95,8 +95,8 @@ export default function Landing() {
           </article>
 
           <article className="how-step reverse">
+            <div className="how-num" aria-hidden="true"><span>2</span></div>
             <div className="how-copy">
-              <span className="how-num">2</span>
               <h3>Get measured metrics</h3>
               <p>Objective data, not vibes. Max decides what to track and how often.</p>
             </div>
@@ -104,8 +104,8 @@ export default function Landing() {
           </article>
 
           <article className="how-step">
+            <div className="how-num" aria-hidden="true"><span>3</span></div>
             <div className="how-copy">
-              <span className="how-num">3</span>
               <h3>Join a protocol group</h3>
               <p>Real people running the same protocol. Streaks, wins, accountability.</p>
             </div>
@@ -113,8 +113,8 @@ export default function Landing() {
           </article>
 
           <article className="how-step reverse">
+            <div className="how-num" aria-hidden="true"><span>4</span></div>
             <div className="how-copy">
-              <span className="how-num">4</span>
               <h3>Prove it</h3>
               <p>Photo, device, or lab — verified, not self-reported. Provable wins.</p>
             </div>
