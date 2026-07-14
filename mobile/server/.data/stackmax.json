@@ -41,6 +41,49 @@
           "proxy_for_goal": true
         }
       ]
+    },
+    "pg_mrjvzsn0suivp": {
+      "id": "pg_mrjvzsn0suivp",
+      "title": "Clear Skin Protocol",
+      "protocol": {
+        "id": "proto_mrjvzsn0ces3p",
+        "title": "Warm/cold face immersion + gentle cleanse",
+        "cadence": "daily"
+      },
+      "goal_label": "good skin",
+      "visibility": "public",
+      "is_seeded": false,
+      "created_at": "2026-07-14T00:02:08.700Z",
+      "metrics": [
+        {
+          "id": "metric_mrjvzsn0wutc0",
+          "canonical_key": "pimple_count",
+          "title": "Pimple count",
+          "description": "",
+          "value_type": "photo_derived",
+          "unit": "count",
+          "cadence": "daily",
+          "direction": "lower_better",
+          "proof_tiers": [
+            "photo"
+          ],
+          "proxy_for_goal": true
+        },
+        {
+          "id": "metric_mrjvzsn0lca55",
+          "canonical_key": "perceived_age",
+          "title": "Perceived age",
+          "description": "",
+          "value_type": "photo_derived",
+          "unit": "years",
+          "cadence": "monthly",
+          "direction": "lower_better",
+          "proof_tiers": [
+            "photo"
+          ],
+          "proxy_for_goal": true
+        }
+      ]
     }
   },
   "members": {
@@ -51,6 +94,14 @@
       "role": "proposer",
       "is_synthetic": false,
       "joined_at": "2026-07-13T23:14:40.564Z"
+    },
+    "usr_mrjvzsn1tbh6u": {
+      "id": "usr_mrjvzsn1tbh6u",
+      "group_id": "pg_mrjvzsn0suivp",
+      "display_name": "You",
+      "role": "proposer",
+      "is_synthetic": false,
+      "joined_at": "2026-07-14T00:02:08.701Z"
     }
   },
   "entries": {},
