@@ -10,6 +10,7 @@ import Activity from './pages/Activity.jsx';
 import Collection from './pages/Collection.jsx';
 import KnowledgeBase from './pages/KnowledgeBase.jsx';
 import Admin from './pages/Admin.jsx';
+import Superadmin from './pages/Superadmin.jsx';
 import About from './pages/About.jsx';
 import Landing from './pages/Landing.jsx';
 import Terms from './pages/Terms.jsx';
@@ -65,6 +66,7 @@ export default function App() {
         <Route path="/collection" element={<Collection />} />
         <Route path="/knowledge" element={<KnowledgeBase />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/superadmin" element={<Superadmin />} />
       </Route>
       <Route path="/login" element={<Navigate to="/" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />

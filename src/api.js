@@ -40,5 +40,8 @@ export const api = {
   completeSession: (orgId, sessionId) =>
     call('/sessions/complete', { method: 'POST', body: { orgId, sessionId } }),
 
-  health: () => call('/health', { auth: false })
+  health: () => call('/health', { auth: false }),
+
+  // Superadmin-only back office: list early-access waitlist signups.
+  superadminWaitlist: () => call('/superadmin/waitlist')
 };
