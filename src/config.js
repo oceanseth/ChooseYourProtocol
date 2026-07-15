@@ -24,5 +24,7 @@ export const config = {
   }
 };
 
-// Early-access waitlist endpoint base; set VITE_WAITLIST_URL at deploy per store pick.
-export const WAITLIST_URL = import.meta.env.VITE_WAITLIST_URL || '';
+// Early-access waitlist endpoint base. Defaults to our own API (`/api/join` via
+// the Lambda) — same-origin in prod, Vite proxy in dev. VITE_WAITLIST_URL can
+// still override it at build time if the waitlist ever moves to a third party.
+export const WAITLIST_URL = import.meta.env.VITE_WAITLIST_URL || `${config.api.baseUrl}/api`;

@@ -381,6 +381,47 @@ async function handleLevelUp(event) {
   return json(200, { created: participantUids.length, opportunityId });
 }
 
+// POST /join — public early-access waitlist signup (no auth).
+// Response contract consumed by src/components/WaitlistModal.jsx:
+//   200 { status: 'accepted' } | { status: 'already_received' }
+//   400 { status: 'invalid', message }
+const WAITLIST_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const WAITLIST_DESC_MIN = 3;
+const WAITLIST_DESC_MAX = 500;
+
+async function handleJoinWaitlist(event) {
+  const body = parseBody(event);
+  const email = String(body.email || '').trim().toLowerCase();
+  const description = String(body.description || '').trim();
+
+  // Validate before initialize() so bad/bot input never costs an SSM + Firebase round trip.
+  if (!WAITLIST_EMAIL_RE.test(email) || email.length > 254) {
+    return json(400, { status: 'invalid', message: 'Please enter a valid email address.' });
+  }
+  if (description.length < WAITLIST_DESC_MIN || description.length > WAITLIST_DESC_MAX) {
+    return json(400, { status: 'invalid', message: `Tell us how you'd like to use StackMax (${WAITLIST_DESC_MIN}–${WAITLIST_DESC_MAX} characters).` });
+  }
+
+  await initialize();
+  const db = admin.firestore();
+  const headers = event.headers || {};
+  // Doc id = the email itself (URI-encoded so it's always a valid single segment),
+  // which makes create() the dedupe: second submit fails with ALREADY_EXISTS.
+  const ref = db.collection('waitlist').doc(encodeURIComponent(email));
+  try {
+    await ref.create({
+      email,
+      description,
+      userAgent: headers['user-agent'] || headers['User-Agent'] || null,
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+  } catch (err) {
+    if (err.code === 6) return json(200, { status: 'already_received' }); // gRPC ALREADY_EXISTS
+    throw err;
+  }
+  return json(200, { status: 'accepted' });
+}
+
 // ---------------------------------------------------------------------------
 // Router
 // ---------------------------------------------------------------------------
@@ -392,6 +433,7 @@ exports.handler = async (event) => {
 
   try {
     if (method === 'GET' && path === '/health') return json(200, { ok: true, service: 'chooseyourprotocol-api' });
+    if (method === 'POST' && path === '/join') return await handleJoinWaitlist(event);
 
     await initialize();
 
