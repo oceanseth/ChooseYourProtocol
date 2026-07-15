@@ -8,7 +8,7 @@ import { WAITLIST_URL } from '../config.js';
 //   { status: 'accepted' }         -> "thanks, we'll be in touch"
 //   { status: 'already_received' } -> "you're already on the list"
 //   { status: 'invalid' } / 4xx/5xx -> soft retry
-// WAITLIST_URL is injected at deploy time by Kylord (src/config.js).
+// WAITLIST_URL defaults to our own API base (src/config.js) -> POST /api/join.
 
 // Format-only check; the server does authoritative dedupe + deliverability.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -64,9 +64,10 @@ export default function WaitlistModal({ open, onClose }) {
       } else if (data.status === 'invalid') {
         setError(data.message || 'Please double-check your email and description.');
       } else {
-        throw new Error(`HTTP ${res.status}`);
+        throw new Error(`HTTP ${res.status} — unexpected response: ${JSON.stringify(data)}`);
       }
     } catch (err) {
+      console.error('[waitlist] join request failed:', err);
       setError("Something went wrong on our end. Please try again in a moment.");
     } finally {
       setSubmitting(false);
