@@ -4,7 +4,12 @@
 
 > Tell an AI coach what you want to improve. It turns your fuzzy goal into a concrete **protocol** with measured metrics and a cadence, drops you into a **group** of people chasing the same thing, and holds you accountable with proof-of-work check-ins. When a brand-new group would otherwise be empty, it's seeded with clearly-labeled synthetic members so it feels alive from day one — and folds itself up honestly once no real people remain.
 
-[chooseyourprotocol.com](https://chooseyourprotocol.com) · [About](https://chooseyourprotocol.com/about)
+[chooseyourprotocol.com](https://chooseyourprotocol.com) · [About](https://chooseyourprotocol.com/about) · [▶ Watch the 60-second demo](docs/stackmax-demo.mp4)
+
+<p align="center">
+  <img src="docs/screenshots/group-screen.png" alt="StackMax group screen — the Warm/Cold Face Reset protocol with due metrics, photo proof, and an accountability group where AI-seeded members keep streaks alive until real people join" width="380">
+</p>
+<p align="center"><em>A live protocol group: metrics with proof tiers, streaks, and honestly-labeled AI-seeded members keeping the group alive until real ones join.</em></p>
 
 ---
 
@@ -62,9 +67,14 @@ Every automated check-in follows a fixed shape, capped under 120 words:
 
 ---
 
-## Social media strategy
+## Built with Kylon
 
-Our launch narrative leans on the "protocol" category conversation. The anchor is **Taryn Southern's "Pinkprint Protocol"** — a women-focused alternative to Bryan Johnson's Blueprint. As Bryan Johnson has built a large audience around a quantified-longevity protocol, StackMax positions "choose *your* protocol" as the accessible, community-accountable version for everyone's goal — not just longevity, and not just one person's stack. Content ties real protocol categories (skin, strength, sleep, recovery) to the accountability-group hook.
+StackMax was built inside **[Kylon](https://kylon.ai)** — an agent workspace where AI agents work alongside the human team in shared channels, like teammates. The workspace runs dedicated channels for each workstream (`app-development`, `synthetic-users`, `social-media`, `website-development`, and `Max` — the coach itself), each driven by a specialized agent: **SeniorDev** builds the app and backend, **DesignerPro** owns visuals, **ChristiBowl** plans and coordinates social media, and **Kylord** orchestrates. Synthetic-user creation and progress imagery are produced as tracked task threads, so every seeded member ties back to an auditable run.
+
+<p align="center">
+  <img src="docs/screenshots/kylon-workspace.png" alt="The Kylon agent workspace used to build StackMax — human members and AI agents (Kylord, DesignerPro, SeniorDev, ChristiBowl) collaborating in channels for app development, synthetic users, social media, and website development" width="900">
+</p>
+<p align="center"><em>The StackMax build workspace in Kylon: humans and agents in the same channels, with task threads for synthetic-user creation and progress images.</em></p>
 
 ---
 
@@ -147,6 +157,24 @@ Once infrastructure exists, **pushing to `main`** triggers GitHub Actions to bui
 - [`docs/hackathon-demo-scenarios.md`](docs/hackathon-demo-scenarios.md) — end-to-end demo scenarios for the Bay Builders Hackathon.
 - [`docs/masky-skill.md`](docs/masky-skill.md) — Masky synthetic-avatar integration reference.
 - `mobile/README.md`, `mobile/server/README-backend.md` — mobile app + coach/group backend contracts.
+
+---
+
+## Social media strategy
+
+Our social growth engine is anchored to marquee, named protocols with a built-in audience — the first being **Taryn Southern's "Pinkprint Protocol."**
+
+**The thesis:** Bryan Johnson's Blueprint has generated an enormous dataset on optimizing health for an aging *man*. But that playbook doesn't map cleanly onto women's biology. The open question — *how do we optimize health for women?* — is exactly the kind of shared problem space StackMax is built to own.
+
+The **Pinkprint Protocol** is Taryn Southern's answer: a women-focused alternative to Blueprint. Users follow it by joining **her Protocol Group on StackMax**, where progress is tracked, measured, and shared with an accountability community.
+
+**How this drives social:**
+- **Named-creator protocols are the hook.** A recognizable person with an existing following (Taryn) gives each protocol a face, a story, and a reason to share — far more shareable than a generic tracker.
+- **The content is the proof.** Progress photos, lab metrics, and scan data inside the group are native, credible social content — the community generates the posts, and StackMax amplifies them.
+- **Join = follow.** Every piece of Pinkprint content routes to a single action: join Taryn's Protocol Group on StackMax and start tracking.
+
+This is the template. Each future marquee protocol pairs a credible owner with a distinct, underserved problem space — and each becomes its own social channel.
+
 
 ---
 
