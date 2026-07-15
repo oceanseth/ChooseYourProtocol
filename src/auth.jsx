@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { onAuthChange, getIdToken, signOut as fbSignOut, db, doc, getDoc } from './firebase.js';
+import { onAuthChange, getIdToken, getClaims, signOut as fbSignOut, db, doc, getDoc } from './firebase.js';
 import { api } from './api.js';
 
 const AuthContext = createContext(null);
@@ -13,6 +13,7 @@ export function AuthProvider({ children }) {
   const [org, setOrg] = useState(null);
   const [member, setMember] = useState(null);
   const [role, setRole] = useState(null);
+  const [superadmin, setSuperadmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -36,6 +37,7 @@ export function AuthProvider({ children }) {
         setOrg(null);
         setMember(null);
         setRole(null);
+        setSuperadmin(false);
         setLoading(false);
         return;
       }
@@ -47,7 +49,9 @@ export function AuthProvider({ children }) {
         // Bootstrap set custom claims (orgId, role) — force a token refresh so
         // Firestore rules see them on subsequent reads/writes.
         await getIdToken(true);
+        const claims = await getClaims();
         setRole(res.claims.role);
+        setSuperadmin(claims?.superadmin === true);
         setOrg(res.org);
         setMember(res.member);
       } catch (e) {
@@ -69,6 +73,7 @@ export function AuthProvider({ children }) {
     loading,
     error,
     isAdmin: role === 'admin',
+    isSuperadmin: superadmin,
     refresh: () => (org && user ? refresh(org.id, user.uid) : Promise.resolve()),
     signOut: () => fbSignOut(),
     setMember

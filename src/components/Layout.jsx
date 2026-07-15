@@ -51,7 +51,7 @@ function AlertBanner() {
 }
 
 export default function Layout() {
-  const { org, member, isAdmin, signOut } = useAuth();
+  const { org, member, isAdmin, isSuperadmin, signOut } = useAuth();
 
   return (
     <div className="app-shell">
@@ -63,6 +63,7 @@ export default function Layout() {
           <NavLink to="/collection">Collection</NavLink>
           <NavLink to="/knowledge">Knowledge</NavLink>
           {isAdmin && <NavLink to="/admin">Admin</NavLink>}
+          {isSuperadmin && <NavLink to="/superadmin">Superadmin</NavLink>}
           <NavLink to="/about">About</NavLink>
         </nav>
         <div className="user-chip">

@@ -133,13 +133,17 @@ async function handleBootstrap(event) {
   });
 
   // Stamp custom claims so Firestore rules can do tenant isolation.
-  await admin.auth().setCustomUserClaims(user.uid, { orgId, role });
+  // setCustomUserClaims REPLACES the whole claims object, so merge with any
+  // existing claims (e.g. superadmin, granted by scripts/set-superadmin.js).
+  const existingClaims = (await admin.auth().getUser(user.uid)).customClaims || {};
+  const claims = { ...existingClaims, orgId, role };
+  await admin.auth().setCustomUserClaims(user.uid, claims);
 
   const [orgSnap, memberSnap] = await Promise.all([orgRef.get(), memberRef.get()]);
   return json(200, {
     org: { id: orgId, ...orgSnap.data() },
     member: { ...memberSnap.data() },
-    claims: { orgId, role }
+    claims
   });
 }
 
@@ -422,6 +426,32 @@ async function handleJoinWaitlist(event) {
   return json(200, { status: 'accepted' });
 }
 
+// GET /superadmin/waitlist — back-office listing of early-access signups.
+// Requires the `superadmin: true` custom claim (granted manually via
+// scripts/set-superadmin.js). The waitlist collection stays default-deny in
+// Firestore rules; clients can only reach it through this endpoint.
+async function handleSuperadminWaitlist(event) {
+  const { user, error } = await requireUser(event);
+  if (error) return error;
+  if (user.superadmin !== true) return json(403, { error: 'Superadmin only' });
+
+  const snap = await admin.firestore()
+    .collection('waitlist')
+    .orderBy('createdAt', 'desc')
+    .limit(500)
+    .get();
+  const entries = snap.docs.map((d) => {
+    const data = d.data();
+    return {
+      email: data.email,
+      description: data.description,
+      userAgent: data.userAgent || null,
+      createdAt: data.createdAt ? data.createdAt.toMillis() : null
+    };
+  });
+  return json(200, { count: entries.length, entries });
+}
+
 // ---------------------------------------------------------------------------
 // Router
 // ---------------------------------------------------------------------------
@@ -443,6 +473,7 @@ exports.handler = async (event) => {
     if (method === 'POST' && path === '/agent/knowledge') return await handleAgentKnowledge(event);
     if (method === 'GET' && path === '/agent/org-availability') return await handleOrgAvailability(event);
     if (method === 'POST' && path === '/agent/level-up') return await handleLevelUp(event);
+    if (method === 'GET' && path === '/superadmin/waitlist') return await handleSuperadminWaitlist(event);
 
     return json(404, { error: `Route not found: ${method} ${path}` });
   } catch (err) {

@@ -15,9 +15,10 @@ export default defineConfig({
     port: 3000,
     strictPort: true,
     // Proxy API calls to the local Lambda dev server during development.
+    // API_PORT lets both sides move off 3001 when another project holds it.
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: `http://localhost:${process.env.API_PORT || 3001}`,
         changeOrigin: true
       }
     }
