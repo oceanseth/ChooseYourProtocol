@@ -23,3 +23,6 @@ export const config = {
     }
   }
 };
+
+// Early-access waitlist endpoint base; set VITE_WAITLIST_URL at deploy per store pick.
+export const WAITLIST_URL = import.meta.env.VITE_WAITLIST_URL || '';
