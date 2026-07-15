@@ -202,18 +202,33 @@ export default function GroupScreen() {
         ))}
       </View>
 
-      {/* Feed — wins & actionable check-ins */}
+      {/* Coach lane entry — the private 1:1 surface */}
       <View style={styles.sec}>
-        <Text style={styles.secTitle}>WINS & CHECK-INS</Text>
-        {group.feed.map((f) => {
+        <TouchableOpacity style={styles.coachEntry} activeOpacity={0.85}
+          onPress={() => router.push({ pathname: '/coach/[groupId]', params: { groupId: group.id } })}>
+          <View style={styles.coachDot}><Text style={{ fontSize: 16 }}>💬</Text></View>
+          <View style={{ flex: 1, marginLeft: 12 }}>
+            <Text style={styles.coachEntryTitle}>Talk to your Coach</Text>
+            <Text style={styles.coachEntrySub}>Private check-ins, nudges & your next photo</Text>
+          </View>
+          <Text style={styles.coachChevron}>›</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Shared group feed — audience:group ONLY (privacy is structural; a user event
+          cannot reach this list). Wins/streaks/milestones + coach announces. */}
+      <View style={styles.sec}>
+        <Text style={styles.secTitle}>WINS & MILESTONES</Text>
+        {group.feed.filter((f) => (f.audience || 'group') === 'group').map((f) => {
           const actionable = f.type === 'check_in' && f.action;
           const hideActor = !showLabels && f.actor?.is_synthetic; // B posture: keep synthetic actors present but unlabeled
           return (
             <View key={f.id} style={styles.fe}>
-              <View style={[styles.fi, styles[`fi_${f.type}`]]}><Text style={styles.fiTxt}>{feedIcon[f.type]}</Text></View>
+              <View style={[styles.fi, f.actor?.is_agent ? styles.fi_coach : styles[`fi_${f.type}`]]}><Text style={styles.fiTxt}>{f.actor?.is_agent ? '💬' : feedIcon[f.type]}</Text></View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.ft}>
-                  <Text style={styles.ftName}>{f.actor?.display_name}</Text>
+                  <Text style={[styles.ftName, f.actor?.is_agent && styles.ftCoach]}>{f.actor?.display_name}</Text>
+                  {f.actor?.is_agent ? <Text style={styles.ftCoachBadge}> · COACH</Text> : null}
                   {showLabels && f.actor?.is_synthetic ? <Text style={styles.ftAi}> · AI-seeded</Text> : null}
                   {'  '}{f.summary}
                 </Text>
@@ -312,5 +327,13 @@ const styles = StyleSheet.create({
   feActionTxt: { color: '#fff', fontWeight: '800', fontSize: 13 },
   leaveBtn: { borderColor: theme.danger, borderWidth: 1, borderRadius: 14, paddingVertical: 13, alignItems: 'center', marginTop: 4 },
   leaveTxt: { color: theme.danger, fontWeight: '800', fontSize: 14 },
-  leaveHint: { color: theme.textDim, fontSize: 11, textAlign: 'center', marginTop: 8, paddingHorizontal: 16, lineHeight: 16 }
+  leaveHint: { color: theme.textDim, fontSize: 11, textAlign: 'center', marginTop: 8, paddingHorizontal: 16, lineHeight: 16 },
+  coachEntry: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.accentSoft, borderColor: '#3A2F5C', borderWidth: 1, borderRadius: 16, padding: 14 },
+  coachDot: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(124,92,255,0.20)', alignItems: 'center', justifyContent: 'center' },
+  coachEntryTitle: { color: theme.text, fontWeight: '800', fontSize: 15 },
+  coachEntrySub: { color: theme.textDim, fontSize: 12, marginTop: 2 },
+  coachChevron: { color: theme.textDim, fontSize: 26, fontWeight: '700' },
+  fi_coach: { backgroundColor: 'rgba(124,92,255,0.20)' },
+  ftCoach: { color: '#B8A6FF' },
+  ftCoachBadge: { color: '#B8A6FF', fontSize: 11, fontWeight: '800', letterSpacing: 0.3 }
 });

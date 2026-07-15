@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import appPreview from '../assets/app-preview.png';
 import step1 from '../assets/steps/step1.webp';
@@ -6,10 +6,12 @@ import step2 from '../assets/steps/step2.webp';
 import step3 from '../assets/steps/step3.webp';
 import step4 from '../assets/steps/step4.webp';
 import { Wordmark, LogoMark } from '../components/Logo.jsx';
+import WaitlistModal from '../components/WaitlistModal.jsx';
 
 const GITHUB_URL = 'https://github.com/oceanseth/ChooseYourProtocol';
 
 export default function Landing() {
+  const [waitlistOpen, setWaitlistOpen] = useState(false);
   useEffect(() => {
     // Progressive enhancement: if the browser lacks scroll-driven animations,
     // reveal steps with IntersectionObserver instead. Respect reduced motion.
@@ -62,7 +64,7 @@ export default function Landing() {
               while we build in the open.
             </p>
             <div className="landing-cta spotlight-cta">
-              <Link className="btn btn-primary btn-lg" to="/login">Get the app</Link>
+              <button className="btn btn-primary btn-lg" onClick={() => setWaitlistOpen(true)}>Get the app</button>
             </div>
           </div>
           <div className="spotlight-device">
@@ -147,6 +149,8 @@ export default function Landing() {
           <a href={GITHUB_URL} target="_blank" rel="noreferrer">GitHub</a>
         </nav>
       </footer>
+
+      <WaitlistModal open={waitlistOpen} onClose={() => setWaitlistOpen(false)} />
     </div>
   );
 }

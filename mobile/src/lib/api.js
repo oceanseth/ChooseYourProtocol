@@ -60,16 +60,33 @@ export async function getGroup(groupId) {
   return res.json();
 }
 
-// GET /groups/:groupId/feed?before=<cursor>  (§3.2)
-export async function getFeed(groupId, before) {
+// GET /groups/:groupId/feed  (§3.2, v3.2: ?audience=group|user & ?as=<memberId>)
+// SURFACE RULE: render by `audience`, never by event `type`. Shared feed = group;
+// 1:1 coach lane = user (scoped to the current member). The privacy boundary is
+// structural — a `user` event cannot come back from an `audience=group` query.
+export async function getFeed(groupId, { before, audience = 'group', as } = {}) {
   if (USE_FIXTURES) {
-    await wait(200);
-    return { events: [], next_before: null }; // fixture inlines the first page
+    await wait(180);
+    return { events: [], next_before: null }; // fixture inlines the first page in group detail
   }
-  const q = before ? `?before=${encodeURIComponent(before)}` : '';
-  const res = await fetch(`${API_BASE}/groups/${groupId}/feed${q}`);
+  const params = new URLSearchParams();
+  if (before) params.set('before', before);
+  if (audience) params.set('audience', audience);
+  if (as) params.set('as', as);
+  const qs = params.toString();
+  const res = await fetch(`${API_BASE}/groups/${groupId}/feed${qs ? '?' + qs : ''}`);
   if (!res.ok) throw new Error(`Feed error (${res.status})`);
   return res.json();
+}
+
+// The 1:1 coach lane for the current member (audience:user, scoped by `as`).
+export async function getCoachLane(groupId, memberId) {
+  if (USE_FIXTURES) {
+    await wait(220);
+    const { FIXTURE_COACH_LANE } = require('../fixtures/group');
+    return { events: FIXTURE_COACH_LANE, next_before: null };
+  }
+  return getFeed(groupId, { audience: 'user', as: memberId });
 }
 
 // POST /groups/:groupId/measure — one multipart call by default (§3.4)
