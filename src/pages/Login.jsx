@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LogoMark } from '../components/Logo.jsx';
 import { signInEmail, signUpEmail, signInGoogle } from '../firebase.js';
-import { DECK_URL } from './About.jsx';
+const DECK_URL =
+  'https://docs.google.com/presentation/d/11MZwAIJX6FNa1xT2bAP2PKtAnsk8JbVJunHnGo4M6Qk/edit?usp=sharing';
 
 export default function Login() {
   const [mode, setMode] = useState('signin');
