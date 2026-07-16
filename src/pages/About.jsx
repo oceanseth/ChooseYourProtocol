@@ -5,6 +5,9 @@ import { LogoMark } from '../components/Logo.jsx';
 export const DECK_URL =
   'https://docs.google.com/presentation/d/11MZwAIJX6FNa1xT2bAP2PKtAnsk8JbVJunHnGo4M6Qk/edit?usp=sharing';
 
+const FILM_URL = '/media/about-film.mp4';
+const FILM_POSTER = '/media/about-film-poster.jpg';
+
 export default function About() {
   return (
     <div className="about-page">
@@ -17,43 +20,48 @@ export default function About() {
       </header>
 
       <section className="about-hero">
-        <h1>The Hidden Function of the Smoke Break</h1>
-        <p className="tagline">A social operating system for modern organizations.</p>
+        <h1>Your body isn't average.</h1>
+        <p className="tagline">Health advice is built on population averages. StackMax builds protocols on people like you.</p>
       </section>
 
-      <img
-        className="about-slide"
-        src="/smoke-break.jpg"
-        alt="The Hidden Function of the Smoke Break — Version 1.0 the accidental OS versus Version 2.0 Choose Your Protocol"
+      <video
+        className="about-video"
+        src={FILM_URL}
+        poster={FILM_POSTER}
+        controls
+        playsInline
+        preload="metadata"
       />
 
       <section className="about-cols">
         <div className="about-col">
-          <h3>Version 1.0 — The Accidental OS</h3>
-          <p className="muted">“It wasn't about smoking.”</p>
-          <p>The smoke break quietly created recurring human connection, mentorship, trust, and cross-team friendships. It was an operating system for culture that nobody designed — and that mostly disappeared.</p>
+          <h3>The label says “5% get dizzy.” Whose 5%?</h3>
+          <p>Every drug label and study reports an average. But averages hide the answer you actually need. Maybe zero women under forty experienced that side effect — the trial just never said so. When many people share real progress data and biometrics, “may cause dizziness” can finally become <em>“no reported side effects in your demographic.”</em></p>
         </div>
         <div className="about-col">
-          <h3>Version 2.0 — Choose Your Protocol</h3>
-          <p>We rebuild that ritual on purpose. An agent watches how your team works, learns what each person wants to grow into, and pulls two free people away from their desks for 90 seconds of movement, novel connection, and a guided conversation — then turns that moment into a reward and a knowledge asset.</p>
+          <h3>Discoveries no one thought to study</h3>
+          <p>Does creatine work differently for men and women? Which skincare routine survives a chlorinated pool? When a group runs the same protocol with photo-proofed check-ins, unknown interactions surface on their own — like swimmers discovering chlorine was undoing their skincare, and a new <em>rinse + moisturize after swim</em> protocol reaching every swimmer the same day.</p>
         </div>
       </section>
 
       <section className="about-loop">
         <h2>The loop</h2>
         <div className="loop-steps">
-          <span>🤖 Agent captures context</span>
-          <span>🎯 You set a goal</span>
-          <span>⚡ Level-up opportunity fires</span>
-          <span>🤝 Matched micro-activity</span>
-          <span>✨ Earn a PokéVibe creature</span>
-          <span>🧱 Knowledge base grows</span>
+          <span>🎯 Tell Max a fuzzy goal</span>
+          <span>📋 Max makes it a measurable protocol</span>
+          <span>👥 Join a study-backed protocol group</span>
+          <span>📸 Share proof and progress over time</span>
+          <span>🧠 Community data reveals what works for whom</span>
+          <span>🧬 Your protocol adapts to your life and biomarkers</span>
         </div>
+        <p className="muted" style={{ marginTop: 12 }}>
+          Data is shared by choice and anonymized in aggregate — and synthetic members are always labeled.
+        </p>
       </section>
 
       <section className="about-cta">
-        <a className="btn btn-primary btn-lg" href={DECK_URL} target="_blank" rel="noreferrer">📊 View the pitch deck</a>
-        <Link className="btn btn-ghost btn-lg" to="/">Try ChooseYourProtocol →</Link>
+        <Link className="btn btn-primary btn-lg" to="/">Start your first protocol →</Link>
+        <a className="btn btn-ghost btn-lg" href={DECK_URL} target="_blank" rel="noreferrer">📊 View the pitch deck</a>
       </section>
     </div>
   );

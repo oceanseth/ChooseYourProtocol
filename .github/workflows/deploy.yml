@@ -39,7 +39,8 @@ jobs:
       - name: Sync to S3
         run: |
           aws s3 sync dist/ "s3://$SITE_BUCKET" --delete \
-            --cache-control "public,max-age=31536000,immutable" --exclude "index.html"
+            --cache-control "public,max-age=31536000,immutable" --exclude "index.html" \
+            --exclude "media/*"
           aws s3 cp dist/index.html "s3://$SITE_BUCKET/index.html" \
             --cache-control "no-cache,no-store,must-revalidate"
 
