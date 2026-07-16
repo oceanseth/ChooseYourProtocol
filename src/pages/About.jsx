@@ -2,9 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { LogoMark } from '../components/Logo.jsx';
 
-export const DECK_URL =
-  'https://docs.google.com/presentation/d/11MZwAIJX6FNa1xT2bAP2PKtAnsk8JbVJunHnGo4M6Qk/edit?usp=sharing';
-
 const FILM_URL = '/media/about-film.mp4';
 const FILM_POSTER = '/media/about-film-poster.jpg';
 
@@ -14,7 +11,6 @@ export default function About() {
       <header className="about-bar">
         <Link to="/" className="brand"><LogoMark size={20} /> <span>ChooseYourProtocol</span></Link>
         <div className="row-gap">
-          <a className="btn btn-ghost" href={DECK_URL} target="_blank" rel="noreferrer">Pitch deck ↗</a>
           <Link className="btn btn-primary" to="/">Enter app</Link>
         </div>
       </header>
@@ -61,7 +57,6 @@ export default function About() {
 
       <section className="about-cta">
         <Link className="btn btn-primary btn-lg" to="/">Start your first protocol →</Link>
-        <a className="btn btn-ghost btn-lg" href={DECK_URL} target="_blank" rel="noreferrer">📊 View the pitch deck</a>
       </section>
     </div>
   );

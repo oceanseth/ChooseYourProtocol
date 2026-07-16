@@ -9,7 +9,16 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    sourcemap: false
+    sourcemap: false,
+    rollupOptions: {
+      // about.html is a crawler-facing entry with /about-specific OG video
+      // meta; it mounts the same SPA. Deployed to the S3 key "about" so it
+      // wins over the 404->index.html SPA fallback for that route.
+      input: {
+        main: 'index.html',
+        about: 'about.html'
+      }
+    }
   },
   server: {
     port: 3000,
